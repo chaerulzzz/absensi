@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Absensi</string>
+    <string name="title_activity_login">Masuk</string>
+    <string name="sub_title_activity_login">Jelajahi Layanan HR Generasi Selanjutnya</string>
+    <string name="username_title_activity_login">Username</string>
+    <string name="password_title_activity_login">Password</string>
+    <string name="welcome_title_activity_home">Welcome back</string>
+    <string name="user_text_activity_home">Hartinah</string>
+    <string name="attendance_title_activity_home">Absensi</string>
+    <string name="request_title_activity_home">Pengajuan</string>
+    <string name="approval_title_activity_home">Approval</string>
+    <string name="profile_title_activity_home">Akun</string>
+    <string name="name_title_activity_profile">Hartinah</string>
+    <string name="faculty_title_activity_profile">Sistem Informasi</string>
+    <string name="study_program_title_activity_profile">Program Studi</string>
+    <string name="study_program_activity_profile">Informasi Teknologi</string>
+    <string name="semester_title_activity_profile">Semester</string>
+    <string name="semester_activity_profile">5</string>
+    <string name="nim_title_activity_profile">Nomor Induk Mahasiswa</string>
+    <string name="nim_activity_profile">02101231313</string>
+    <string name="university_title_activity_profile">Universitas</string>
+    <string name="university_activity_profile">Bina Nusantara</string>
+    <string name="title_activity_request">Pengajuan terbaru</string>
+    <string name="view_all_title_activity_request">Lihat semua</string>
+    <string name="item_title_activity_request">Pengajuan Sakit</string>
+    <string name="status_title_activity_request">Status : Disetujui</string>
+    <string name="period_title_activity_request">Periode: 25 Juni 2020 \- 26 Juni 2020</string>
+</resources>
