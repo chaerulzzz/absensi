@@ -32,7 +32,7 @@
                 android:id="@+id/tv1"
                 android:layout_above="@id/cardView"
                 android:layout_marginStart="10dp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sub_title_activity_login"
@@ -59,7 +59,7 @@
                         android:hint="@string/username_title_activity_login"
                         android:textColorHint="@android:color/black"
                         app:endIconMode="clear_text"
-                        app:boxBackgroundColor="@android:color/white">
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/tietUsername"
@@ -74,7 +74,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/password_title_activity_login"
                         android:textColorHint="@android:color/black"
-                        app:boxBackgroundColor="@android:color/white"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:endIconMode="password_toggle">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -84,17 +84,18 @@
                             android:textColor="@android:color/black"
                             android:inputType="textPassword"/>
                     </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnLogin"
-                        android:backgroundTint="@color/colorAccent"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:text="@string/title_activity_login"
-                        android:textColor="@android:color/white" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogin"
+                android:backgroundTint="@color/colorAccent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cardView"
+                android:layout_margin="5dp"
+                android:text="@string/title_activity_login"
+                android:textColor="@android:color/white" />
         </RelativeLayout>
     </LinearLayout>
 

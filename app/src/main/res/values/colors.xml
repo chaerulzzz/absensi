@@ -9,4 +9,9 @@
     <color name="homeBackgroundColor">#EFF0F1</color>
     <color name="titleHomeBackgroundColor">#8F8F8F</color>
     <color name="profileBackgroundColor">#5834E4</color>
+
+    <color name="lateColorBackground">#61B6EE</color>
+    <color name="alphaColorBackground">#D81B60</color>
+    <color name="leaveColorBackground">#5834E4</color>
+    <color name="homeHeaderBackground">#D74B4B</color>
 </resources>
