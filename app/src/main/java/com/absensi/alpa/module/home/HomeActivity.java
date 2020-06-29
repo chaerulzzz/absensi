@@ -1,20 +1,22 @@
 package com.absensi.alpa.module.home;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
 
 import com.absensi.alpa.R;
+import com.absensi.alpa.module.profile.ProfileFragment;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
-    private RecyclerView recyclerView;
-    private HomeAdapter adapter;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,28 +26,41 @@ public class HomeActivity extends AppCompatActivity {
         Objects.requireNonNull(this.getSupportActionBar()).hide();
 
         this.init();
-        this.setData();
+        this.loadFragment(new DashboardFragment());
     }
 
     private void init() {
-        this.adapter = new HomeAdapter();
-        this.recyclerView = findViewById(R.id.recyclerView);
+        this.bottomNavigationView = findViewById(R.id.bottom_navigation);
+        this.bottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
-    private void setData() {
-        if (this.adapter != null) {
-            this.adapter.getItems().clear();
+    private boolean loadFragment(Fragment fragment) {
+        if (fragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragment, fragment)
+                    .commit();
 
-            HomeAdapter.Item item1 = new HomeAdapter.Item();
-            item1.setText("Test");
-            this.adapter.getItems().add(item1);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-            HomeAdapter.Item item2 = new HomeAdapter.Item();
-            item1.setText("Test");
-            this.adapter.getItems().add(item2);
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment fragment = null;
+
+        switch (item.getItemId()) {
+            case R.id.navigation_dashboard:
+                fragment = new DashboardFragment();
+                break;
+
+            case R.id.navigation_profile:
+                fragment = new ProfileFragment();
+                break;
         }
 
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        this.recyclerView.setAdapter(adapter);
+        return loadFragment(fragment);
     }
 }

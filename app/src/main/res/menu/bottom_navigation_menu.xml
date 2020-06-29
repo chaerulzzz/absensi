@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:enabled="true"
+        android:icon="@drawable/ic_home"
+        android:title="@string/title_activity_home"/>
+
+    <item
+        android:id="@+id/navigation_absence"
+        android:enabled="true"
+        android:icon="@drawable/ic_absence"
+        android:title="@string/attendance_title_activity_home"/>
+
+    <item
+        android:id="@+id/navigation_permit"
+        android:enabled="true"
+        android:icon="@drawable/ic_approval"
+        android:title="@string/request_title_activity_home"/>
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:enabled="true"
+        android:icon="@drawable/ic_user"
+        android:title="@string/request_title_activity_home"/>
+</menu>

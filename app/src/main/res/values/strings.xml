@@ -4,6 +4,7 @@
     <string name="sub_title_activity_login">Jelajahi Layanan HR Generasi Selanjutnya</string>
     <string name="username_title_activity_login">Username</string>
     <string name="password_title_activity_login">Password</string>
+    <string name="title_activity_home">Beranda</string>
     <string name="welcome_title_activity_home">Welcome back</string>
     <string name="user_text_activity_home">Hartinah</string>
     <string name="attendance_title_activity_home">Absensi</string>
