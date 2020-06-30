@@ -80,6 +80,7 @@ public class Api {
         mBuilder.connectTimeout(30, TimeUnit.SECONDS);
         mBuilder.readTimeout(30, TimeUnit.SECONDS);
         mBuilder.addInterceptor(mHttpLoggingInterceptor);
+        mBuilder.addInterceptor(new AuthenticationInterceptor());
         mBuilder.cookieJar(new CookieJar() {
             @Override
             public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {

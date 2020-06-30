@@ -7,28 +7,28 @@ import java.io.Serializable;
 
 public class GeneralRequest implements Serializable {
 
-    @SerializedName("ts")
+    @SerializedName("code")
     @Expose
-    private Long timestamp;
+    private String code;
 
-    @SerializedName("sc")
+    @SerializedName("message")
     @Expose
-    private String securityCode;
+    private String message;
 
-    public Long getTimestamp() {
-        return timestamp;
+    public String getCode() {
+        return code;
     }
 
-    public void setTimestamp(Long timestamp) {
-        this.timestamp = timestamp;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public String getSecurityCode() {
-        return securityCode;
+    public String getMessage() {
+        return message;
     }
 
-    public void setSecurityCode(String securityCode) {
-        this.securityCode = securityCode;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
 

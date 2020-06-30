@@ -14,6 +14,10 @@ public class LoginRequest extends GeneralRequest {
     @Expose
     private String password;
 
+    @SerializedName("aid")
+    @Expose
+    private String aid;
+
     public String getEmail() {
         return email;
     }
@@ -28,6 +32,14 @@ public class LoginRequest extends GeneralRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAid() {
+        return aid;
+    }
+
+    public void setAid(String aid) {
+        this.aid = aid;
     }
 }
 

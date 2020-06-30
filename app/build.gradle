@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
 
 def keystorePropertiesFile = rootProject.file("absen.properties")
 def keystoreProperties = new Properties()
@@ -33,6 +33,12 @@ android {
     buildTypes.each {
         it.buildConfigField 'String', 'URL_BASE', keystoreProperties['baseUrl']
         it.buildConfigField 'String', 'URL_LOGIN', keystoreProperties['loginUrl']
+        it.buildConfigField 'String', 'URL_FORGET', keystoreProperties['forgetUrl']
+        it.buildConfigField 'String', 'URL_ATTENDANCE', keystoreProperties['attendanceUrl']
+        it.buildConfigField 'String', 'URL_REQUEST', keystoreProperties['requestUrl']
+        it.buildConfigField 'String', 'URL_APPROVAL', keystoreProperties['approvalUrl']
+        it.buildConfigField 'String', 'URL_USER', keystoreProperties['userUrl']
+        it.buildConfigField 'String', 'URL_DASHBOARD', keystoreProperties['dashboardUrl']
     }
 }
 
@@ -41,6 +47,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.core:core-ktx:1.3.0'
+    implementation "androidx.preference:preference:1.1.1"
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.4.0'

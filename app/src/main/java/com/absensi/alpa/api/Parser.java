@@ -12,4 +12,5 @@ public interface Parser {
 
     @POST
     Call<LoginResponse> sendLogin(@Url String url, @Body LoginRequest request);
+
 }
