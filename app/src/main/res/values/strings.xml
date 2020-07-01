@@ -29,6 +29,10 @@
     <string name="check_in_title_dashboard_fragment">Check In</string>
     <string name="check_out_title_dashboard_fragment">Check Out</string>
 
+    <string name="absent_in_title_activity">Absen Masuk</string>
+    <string name="absent_out_title_activity">Absen Keluar</string>
+    <string name="absent_back_title_activity">Kembali</string>
+
     <string name="error_username_password_incorrect">Username atau password tidak sesuai</string>
     <string name="error_occurred_contact_admin">ada error di aplikasi, silahkan hubungi admin</string>
     <string name="error_not_connected_to_server">tidak terhubung ke server, cek koneksi internet anda dan silahkan coba kembali</string>

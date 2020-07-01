@@ -96,9 +96,9 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/tvLateIn"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="15"
                             android:textColor="@android:color/white"
                             android:textSize="20sp"/>
 
@@ -211,9 +211,9 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/tvTotalLeave"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="12"
                             android:textColor="@android:color/white"
                             android:textSize="20sp"/>
 
@@ -259,9 +259,9 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/tvPending"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="6"
                             android:textColor="@android:color/white"
                             android:textSize="20sp"/>
 

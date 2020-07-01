@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.absensi.alpa.R;
+import com.absensi.alpa.module.absence.AbsenceFragment;
 import com.absensi.alpa.module.profile.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -34,7 +35,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         this.bottomNavigationView.setOnNavigationItemSelectedListener(this);
     }
 
-    private boolean loadFragment(Fragment fragment) {
+    public boolean loadFragment(Fragment fragment) {
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
@@ -54,6 +55,10 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         switch (item.getItemId()) {
             case R.id.navigation_dashboard:
                 fragment = new DashboardFragment();
+                break;
+
+            case R.id.navigation_absence:
+                fragment = new AbsenceFragment();
                 break;
 
             case R.id.navigation_profile:

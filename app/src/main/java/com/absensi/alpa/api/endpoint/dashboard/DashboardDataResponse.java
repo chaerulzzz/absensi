@@ -17,6 +17,18 @@ public class DashboardDataResponse {
     @Expose
     private String alpha;
 
+    @SerializedName("total_leave")
+    @Expose
+    private String totalLeave;
+
+    @SerializedName("pending")
+    @Expose
+    private String pending;
+
+    @SerializedName("late_in")
+    @Expose
+    private String lateIn;
+
     public String getTimeIn() {
         return timeIn;
     }
@@ -39,5 +51,29 @@ public class DashboardDataResponse {
 
     public void setAlpha(String alpha) {
         this.alpha = alpha;
+    }
+
+    public String getTotalLeave() {
+        return totalLeave;
+    }
+
+    public void setTotalLeave(String totalLeave) {
+        this.totalLeave = totalLeave;
+    }
+
+    public String getPending() {
+        return pending;
+    }
+
+    public void setPending(String pending) {
+        this.pending = pending;
+    }
+
+    public String getLateIn() {
+        return lateIn;
+    }
+
+    public void setLateIn(String lateIn) {
+        this.lateIn = lateIn;
     }
 }

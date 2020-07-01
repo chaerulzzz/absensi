@@ -18,7 +18,6 @@ public class Constant {
     public enum CREDENTIALS {
         SESSION,
         PASSWORD,
-        ABSENT_STRICT,
         ABSENT_IMAGE,
         LETTER_SICK,
         NOTES,

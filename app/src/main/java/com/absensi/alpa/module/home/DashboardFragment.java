@@ -32,7 +32,7 @@ public class DashboardFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private HomeAdapter adapter;
-    private TextView tvAlpha;
+    private TextView tvAlpha, tvTotalLeave, tvPending, tvLateIn;
 
     @Nullable
     @Override
@@ -48,6 +48,9 @@ public class DashboardFragment extends Fragment {
         this.adapter = new HomeAdapter();
         this.recyclerView = view.findViewById(R.id.recyclerView);
         this.tvAlpha = view.findViewById(R.id.tvAlpha);
+        this.tvLateIn = view.findViewById(R.id.tvLateIn);
+        this.tvPending = view.findViewById(R.id.tvPending);
+        this.tvTotalLeave = view.findViewById(R.id.tvTotalLeave);
     }
 
     private void setData() {
@@ -71,6 +74,9 @@ public class DashboardFragment extends Fragment {
                                 DashboardDataResponse dataResponse = dashboardResponse.getData();
 
                                 tvAlpha.setText(dataResponse.getAlpha());
+                                tvLateIn.setText(dataResponse.getLateIn());
+                                tvPending.setText(dataResponse.getPending());
+                                tvTotalLeave.setText(dataResponse.getTotalLeave());
 
                                 if (adapter != null) {
                                     adapter.getItems().clear();
@@ -79,7 +85,7 @@ public class DashboardFragment extends Fragment {
                                     item1.setTitle(DashboardFragment.this.getString(R.string.check_in_title_dashboard_fragment));
 
                                     HomeAdapter.Item item2 = new HomeAdapter.Item();
-                                    item1.setTitle(DashboardFragment.this.getString(R.string.check_out_title_dashboard_fragment));
+                                    item2.setTitle(DashboardFragment.this.getString(R.string.check_out_title_dashboard_fragment));
 
                                     if (dataResponse.getTimeIn().equalsIgnoreCase("")) {
                                         item1.setTime("");
@@ -95,6 +101,7 @@ public class DashboardFragment extends Fragment {
 
                                     adapter.getItems().add(item1);
                                     adapter.getItems().add(item2);
+                                    adapter.notifyDataSetChanged();
                                 }
                             }
                         } else {
