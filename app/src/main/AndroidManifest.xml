@@ -4,6 +4,20 @@
     package="com.absensi.alpa">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- Needed only if your app targets Android 5.0 (API level 21) or higher. -->
+    <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:name=".AbsensiApplication"
@@ -15,6 +29,15 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.absensi.alpa.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>
         <activity android:name=".module.login.LoginActivity"
             android:theme="@style/NoActionBar">
             <intent-filter>
@@ -23,8 +46,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.absensi.alpa.module.home.HomeActivity"
-            android:theme="@style/NoActionBar"/>
-        <activity android:name="com.absensi.alpa.module.request.RequestActivity"
             android:theme="@style/NoActionBar"/>
     </application>
 

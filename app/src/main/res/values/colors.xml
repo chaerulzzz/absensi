@@ -14,6 +14,8 @@
     <color name="alphaColorBackground">#D81B60</color>
     <color name="leaveColorBackground">#5834E4</color>
     <color name="homeHeaderBackground">#D74B4B</color>
+    <color name="yellowColorBackground">#FFC107</color>
 
+    <color name="itemAbsentCardColor">#E6FDF8F8</color>
     <color name="roundInColorBackground">#00B1EF</color>
 </resources>

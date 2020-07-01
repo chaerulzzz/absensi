@@ -12,10 +12,16 @@ import androidx.fragment.app.Fragment;
 
 import com.absensi.alpa.R;
 import com.absensi.alpa.module.home.HomeActivity;
+import com.google.android.material.button.MaterialButton;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class AbsenceFragment extends Fragment implements View.OnClickListener {
 
-    private TextView tvDay, tvDate, btnCheckIn, btnCheckOut;
+    private TextView tvDay, tvDate;
+    private MaterialButton btnCheckIn, btnCheckOut, btnAbsentList;
 
     @Nullable
     @Override
@@ -23,6 +29,7 @@ public class AbsenceFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_absent, container, false);
 
         this.init(view);
+        this.setData();
         return view;
     }
 
@@ -35,6 +42,9 @@ public class AbsenceFragment extends Fragment implements View.OnClickListener {
 
         this.btnCheckOut = view.findViewById(R.id.btnCheckOut);
         this.btnCheckOut.setOnClickListener(this);
+
+        this.btnAbsentList = view.findViewById(R.id.btnLisAbsent);
+        this.btnAbsentList.setOnClickListener(this);
     }
 
     @Override
@@ -43,6 +53,17 @@ public class AbsenceFragment extends Fragment implements View.OnClickListener {
             ((HomeActivity)this.requireActivity()).loadFragment(new AbsenceDetailFragment(0));
         } else if (v.equals(btnCheckOut)) {
             ((HomeActivity)this.requireActivity()).loadFragment(new AbsenceDetailFragment(1));
+        } else if (v.equals(btnAbsentList)) {
+            ((HomeActivity)this.requireActivity()).loadFragment(new AbsenceListFragment());
         }
+    }
+
+    private void setData(){
+        Date date = new Date();
+        SimpleDateFormat day = new SimpleDateFormat("EEE", Locale.getDefault());
+        SimpleDateFormat dateNow = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+
+        this.tvDay.setText(day.format(date));
+        this.tvDate.setText(dateNow.format(date));
     }
 }

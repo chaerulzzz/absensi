@@ -25,6 +25,7 @@
         android:layout_centerHorizontal="true"/>
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvDate"
@@ -39,6 +40,7 @@
             android:layout_marginEnd="20dp"
             android:textColor="@android:color/white"
             android:textAllCaps="false"
+            app:backgroundTint="@color/leaveColorBackground"
             android:text="@string/check_in_title_dashboard_fragment"/>
 
         <com.google.android.material.button.MaterialButton
@@ -50,4 +52,14 @@
             android:textColor="@android:color/white"
             app:backgroundTint="@color/colorAccent"/>
     </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLisAbsent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white"
+        android:text="@string/all_absent_list_activity"
+        app:backgroundTint="@color/lateColorBackground"/>
 </RelativeLayout>

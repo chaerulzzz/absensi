@@ -37,6 +37,17 @@
     <string name="error_occurred_contact_admin">ada error di aplikasi, silahkan hubungi admin</string>
     <string name="error_not_connected_to_server">tidak terhubung ke server, cek koneksi internet anda dan silahkan coba kembali</string>
     <string name="error_username_password_not_empty">Username atau password tidak boleh kosong</string>
+    <string name="success_absent_in">Absen Masuk Sukses</string>
+    <string name="success_absent_out">Absen Keluar Sukses</string>
+    <string name="all_absent_list_activity">Lihat Riwayat Absensi</string>
+
+    <string name="leave_title_request_fragment">Cuti</string>
+    <string name="permit_title_request_fragment">Izin</string>
+    <string name="Sick_title_request_fragment">Sakit</string>
+    <string name="overtime_title_request_fragment">Lembur</string>
+    <string name="title_request_fragment">Pengajuanku</string>
+    <string name="period_title_item_request_fragment">Periode :</string>
+    <string name="created_title_item_request_fragment">Pembuat :</string>
 
     <string name="item_no_absent_data">Belum Data</string>
 </resources>

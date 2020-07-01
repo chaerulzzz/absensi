@@ -40,6 +40,7 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.fragment, fragment)
+                    .addToBackStack(null)
                     .commit();
 
             return true;

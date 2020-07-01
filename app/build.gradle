@@ -39,6 +39,11 @@ android {
         it.buildConfigField 'String', 'URL_APPROVAL', keystoreProperties['approvalUrl']
         it.buildConfigField 'String', 'URL_USER', keystoreProperties['userUrl']
         it.buildConfigField 'String', 'URL_DASHBOARD', keystoreProperties['dashboardUrl']
+        it.buildConfigField 'String', 'URL_REQUEST_PERMIT', keystoreProperties['permitUrl']
+        it.buildConfigField 'String', 'URL_REQUEST_LEAVE', keystoreProperties['leaveUrl']
+        it.buildConfigField 'String', 'URL_REQUEST_SICK', keystoreProperties['sickUrl']
+        it.buildConfigField 'String', 'URL_REQUEST_OVERTIME', keystoreProperties['overtimeUrl']
+
     }
 }
 

@@ -28,6 +28,10 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.absensi.alpa.R;
+import com.absensi.alpa.api.endpoint.present.PresentResponse;
+import com.absensi.alpa.api.endpoint.present.PresentService;
+import com.absensi.alpa.module.home.HomeActivity;
+import com.absensi.alpa.tools.Constant;
 import com.absensi.alpa.tools.Tools;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -36,8 +40,18 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.button.MaterialButton;
 
+import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AbsenceDetailFragment extends Fragment implements View.OnClickListener {
 
@@ -114,6 +128,8 @@ public class AbsenceDetailFragment extends Fragment implements View.OnClickListe
                     startActivityForResult(goTo, 99);
                 }
             }
+        } else if (v.equals(btnAbsence)) {
+            sendPresence(type);
         }
     }
 
@@ -230,5 +246,56 @@ public class AbsenceDetailFragment extends Fragment implements View.OnClickListe
             return;
         }
         mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+    }
+
+    private void sendPresence(int type) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss", Locale.getDefault());
+        Call<PresentResponse> responseCall = PresentService.sendPresence(
+                this.requireActivity(),
+                Constant.URL.ATTENDANCE,
+                type == 0 ? sdf.format(new Date(System.currentTimeMillis())) : "",
+                type == 1 ? sdf.format(new Date(System.currentTimeMillis())) : "",
+                latitude,
+                longitude,
+                imageValue
+        );
+
+        responseCall.enqueue(new Callback<PresentResponse>() {
+            @Override
+            public void onResponse(@NotNull Call<PresentResponse> call, @NotNull Response<PresentResponse> response) {
+                try {
+                    if (response.isSuccessful()) {
+                        PresentResponse presentResponse = response.body();
+
+                        if (presentResponse != null) {
+                            if (presentResponse.getCode().equalsIgnoreCase("200")) {
+                                if (type == 0) {
+                                    Toast.makeText(AbsenceDetailFragment.this.getContext(), AbsenceDetailFragment.this.getString(R.string.success_absent_in), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(AbsenceDetailFragment.this.getContext(), AbsenceDetailFragment.this.getString(R.string.success_absent_out), Toast.LENGTH_SHORT).show();
+                                }
+                                ((HomeActivity)AbsenceDetailFragment.this.requireActivity()).loadFragment(new AbsenceFragment());
+                            }
+                        } else {
+                            Toast.makeText(AbsenceDetailFragment.this.getContext(), AbsenceDetailFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        try {
+                            JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
+                            Toast.makeText(AbsenceDetailFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(AbsenceDetailFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                } catch (Exception ex) {
+                    Toast.makeText(AbsenceDetailFragment.this.getContext(), AbsenceDetailFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<PresentResponse> call, @NotNull Throwable t) {
+                Toast.makeText(AbsenceDetailFragment.this.getContext(), AbsenceDetailFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

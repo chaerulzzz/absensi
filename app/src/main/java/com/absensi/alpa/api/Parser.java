@@ -10,6 +10,8 @@ import com.absensi.alpa.api.endpoint.login.LoginRequest;
 import com.absensi.alpa.api.endpoint.login.LoginResponse;
 import com.absensi.alpa.api.endpoint.present.PresentRequest;
 import com.absensi.alpa.api.endpoint.present.PresentResponse;
+import com.absensi.alpa.api.endpoint.request.RequestListRequest;
+import com.absensi.alpa.api.endpoint.request.RequestListResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -33,4 +35,7 @@ public interface Parser {
 
     @POST
     Call<PresentResponse> sendPresence(@Url String url, @Body PresentRequest request);
+
+    @GET
+    Call<RequestListResponse> getRequstList(@Url String url, @Body RequestListRequest request);
 }
