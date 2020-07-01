@@ -1,4 +1,4 @@
-package com.absensi.alpa.api.endpoint.login;
+package com.absensi.alpa.api.endpoint.attendance;
 
 import com.absensi.alpa.api.endpoint.GeneralResponse;
 import com.google.gson.annotations.Expose;
@@ -7,17 +7,17 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class LoginResponse extends GeneralResponse implements Serializable {
+public class AttendanceResponse extends GeneralResponse implements Serializable {
 
     @SerializedName("data")
     @Expose
-    private LoginDataResponse data;
+    private List<AttendanceDataResponse> data;
 
-    public LoginDataResponse getData() {
+    public List<AttendanceDataResponse> getData() {
         return data;
     }
 
-    public void setData(LoginDataResponse data) {
+    public void setData(List<AttendanceDataResponse> data) {
         this.data = data;
     }
 }

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class GeneralRequest implements Serializable {
+public class GeneralResponse implements Serializable {
 
     @SerializedName("code")
     @Expose

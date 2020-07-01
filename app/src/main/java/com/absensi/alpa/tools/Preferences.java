@@ -41,15 +41,15 @@ public class Preferences {
         }
 
         if (mValue instanceof String) {
-            this.mEditor.putString(sharedPreferences.toString(), (String) mValue);
+            this.mEditor.putString(key.toString(), (String) mValue);
         } else if (mValue instanceof Integer) {
-            this.mEditor.putInt(sharedPreferences.toString(), (Integer) mValue);
+            this.mEditor.putInt(key.toString(), (Integer) mValue);
         } else if (mValue instanceof Float) {
-            this.mEditor.putFloat(sharedPreferences.toString(), (Float) mValue);
+            this.mEditor.putFloat(key.toString(), (Float) mValue);
         } else if (mValue instanceof Long) {
-            this.mEditor.putLong(sharedPreferences.toString(), (Long) mValue);
+            this.mEditor.putLong(key.toString(), (Long) mValue);
         } else if (mValue instanceof Boolean) {
-            this.mEditor.putBoolean(sharedPreferences.toString(), (Boolean) mValue);
+            this.mEditor.putBoolean(key.toString(), (Boolean) mValue);
         } else {
             Log.e(TAG, "Unsupported mValue type.");
         }
@@ -60,7 +60,7 @@ public class Preferences {
             Log.e(TAG, "You must call begin() first.");
             return;
         }
-        this.mEditor.apply();
+        this.mEditor.commit();
     }
 
     public void setSharedPreferences(SharedPreferences mSharedPreferences) {

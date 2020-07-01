@@ -150,9 +150,9 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/tvAlpha"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2"
                             android:textColor="@android:color/white"
                             android:textSize="20sp"/>
 

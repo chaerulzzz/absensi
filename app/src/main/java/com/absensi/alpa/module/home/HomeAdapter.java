@@ -3,13 +3,18 @@ package com.absensi.alpa.module.home;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.absensi.alpa.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
@@ -27,7 +32,21 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Item item = items.get(position);
 
+        holder.tvTitle.setText(item.getTitle());
+
+        if (!item.getTime().equalsIgnoreCase("")) {
+            SimpleDateFormat day = new SimpleDateFormat("EEEE", Locale.getDefault());
+            SimpleDateFormat date = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+
+            holder.tvSubtitleDay.setText(day.format(new Date()));
+            holder.tvSubtitleDate.setText(date.format(new Date()));
+            holder.tvTime.setText(item.getTime());
+        } else {
+            holder.llMainView.setVisibility(View.GONE);
+            holder.tvNoData.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -35,21 +54,39 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         return items.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView tvTitle, tvSubtitleDay, tvSubtitleDate, tvTime, tvNoData;
+        private LinearLayout llMainView;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            tvTitle = itemView.findViewById(R.id.tvTitle);
+            tvSubtitleDay = itemView.findViewById(R.id.tvSubtitleDay);
+            tvSubtitleDate = itemView.findViewById(R.id.tvSubtitleDate);
+            tvTime = itemView.findViewById(R.id.tvTime);
+            tvNoData = itemView.findViewById(R.id.tvNoData);
+            llMainView = itemView.findViewById(R.id.llMainView);
         }
     }
 
     public static class Item {
-        private String text;
+        private String title;
+        private String time;
 
-        public String getText() {
-            return text;
+        public String getTitle() {
+            return title;
         }
 
-        public void setText(String text) {
-            this.text = text;
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getTime() {
+            return time;
+        }
+
+        public void setTime(String time) {
+            this.time = time;
         }
     }
 

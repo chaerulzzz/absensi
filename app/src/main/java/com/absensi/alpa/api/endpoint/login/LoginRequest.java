@@ -1,10 +1,10 @@
 package com.absensi.alpa.api.endpoint.login;
 
-import com.absensi.alpa.api.endpoint.GeneralRequest;
+import com.absensi.alpa.api.endpoint.GeneralResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class LoginRequest extends GeneralRequest {
+public class LoginRequest {
 
     @SerializedName("email")
     @Expose

@@ -43,6 +43,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
         Objects.requireNonNull(this.getSupportActionBar()).hide();
 
+        if (!Preferences.getInstance().getValue(Constant.CREDENTIALS.SESSION, String.class, "").equalsIgnoreCase("")){
+            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+
         this.init();
         this.setData();
     }
@@ -82,22 +89,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                                     if (loginResponse != null) {
                                         if (loginResponse.getCode().equalsIgnoreCase("200")) {
-                                            for(LoginDataResponse dataResponse: loginResponse.getData()) {
-                                                Preferences preferences = Preferences.getInstance();
-                                                preferences.begin();
-                                                preferences.put(Constant.CREDENTIALS.EMAIL, dataResponse.getEmail());
-                                                preferences.put(Constant.CREDENTIALS.NAME, dataResponse.getName());
-                                                preferences.put(Constant.CREDENTIALS.SESSION, dataResponse.getToken());
-                                                preferences.put(Constant.CREDENTIALS.USERID, dataResponse.getId());
-                                                preferences.commit();
-                                            }
+                                            LoginDataResponse dataResponse = loginResponse.getData();
 
-                                            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+                                            Preferences preferences = Preferences.getInstance();
+                                            preferences.begin();
+                                            preferences.put(Constant.CREDENTIALS.EMAIL, dataResponse.getEmail());
+                                            preferences.put(Constant.CREDENTIALS.NAME, dataResponse.getName());
+                                            preferences.put(Constant.CREDENTIALS.SESSION, dataResponse.getToken());
+                                            preferences.put(Constant.CREDENTIALS.USERID, dataResponse.getId());
+                                            preferences.commit();
+
+                                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            startActivity(intent);
+                                            finish();
                                         } else {
-                                            Toast.makeText(LoginActivity.this, "Username atau password tidak sesuai", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(LoginActivity.this, LoginActivity.this.getString(R.string.error_username_password_incorrect), Toast.LENGTH_SHORT).show();
                                         }
                                     } else {
-                                        Toast.makeText(LoginActivity.this, "Ada error, hubungi admin", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(LoginActivity.this, LoginActivity.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
                                     try {
@@ -108,7 +118,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                     }
                                 }
                             } catch (Exception ex) {
-                                Toast.makeText(LoginActivity.this, "ada error di aplikasi, silahkan hubungi admin", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, LoginActivity.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
                             } finally {
                                 dialog.dismiss();
                             }
@@ -116,18 +126,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         @Override
                         public void onFailure(@NotNull Call<LoginResponse> call, @NotNull Throwable t) {
-                            Toast.makeText(LoginActivity.this, "tidak terhubung ke server, cek koneksi internet anda dan silahkan coba kembali", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, LoginActivity.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
 
                             dialog.dismiss();
                         }
                     });
                 } else {
-                    Toast.makeText(this, "Username atau password tidak boleh kosong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, LoginActivity.this.getString(R.string.error_username_password_not_empty), Toast.LENGTH_SHORT).show();
 
                     dialog.dismiss();
                 }
             } else {
-                Toast.makeText(this, "Username atau password tidak boleh kosong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, LoginActivity.this.getString(R.string.error_username_password_not_empty), Toast.LENGTH_SHORT).show();
 
                 dialog.dismiss();
             }
