@@ -43,7 +43,7 @@ android {
         it.buildConfigField 'String', 'URL_REQUEST_LEAVE', keystoreProperties['leaveUrl']
         it.buildConfigField 'String', 'URL_REQUEST_SICK', keystoreProperties['sickUrl']
         it.buildConfigField 'String', 'URL_REQUEST_OVERTIME', keystoreProperties['overtimeUrl']
-
+        it.buildConfigField 'String', 'URL_ATTENDANCE_LIST', keystoreProperties['attendanceListUrl']
     }
 }
 

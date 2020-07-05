@@ -14,6 +14,12 @@
     <item
         android:id="@+id/navigation_permit"
         android:enabled="true"
+        android:icon="@drawable/ic_request_permit"
+        android:title="@string/request_title_activity_home"/>
+
+    <item
+        android:id="@+id/navigation_approval"
+        android:enabled="true"
         android:icon="@drawable/ic_approval"
         android:title="@string/request_title_activity_home"/>
 

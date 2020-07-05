@@ -8,6 +8,7 @@ public class Constant {
         String BASE_URL = BuildConfig.URL_BASE;
         String LOGIN = BuildConfig.URL_LOGIN;
         String ATTENDANCE = BuildConfig.URL_ATTENDANCE;
+        String ATTENDANCE_LIST = BuildConfig.URL_ATTENDANCE_LIST;
         String REQUEST = BuildConfig.URL_REQUEST;
         String PERMIT = BuildConfig.URL_REQUEST_PERMIT;
         String LEAVE = BuildConfig.URL_REQUEST_LEAVE;

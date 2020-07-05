@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment;
 
 import com.absensi.alpa.R;
 import com.absensi.alpa.module.absence.AbsenceFragment;
+import com.absensi.alpa.module.approval.ApprovalFragment;
 import com.absensi.alpa.module.profile.ProfileFragment;
+import com.absensi.alpa.module.request.RequestFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
@@ -39,6 +41,9 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(android.R.animator.fade_in,
+                            android.R.animator.fade_out, android.R.animator.fade_in,
+                            android.R.animator.fade_out)
                     .replace(R.id.fragment, fragment)
                     .addToBackStack(null)
                     .commit();
@@ -60,6 +65,14 @@ public class HomeActivity extends AppCompatActivity implements BottomNavigationV
 
             case R.id.navigation_absence:
                 fragment = new AbsenceFragment();
+                break;
+
+            case R.id.navigation_permit:
+                fragment = new RequestFragment();
+                break;
+
+            case R.id.navigation_approval:
+                fragment = new ApprovalFragment();
                 break;
 
             case R.id.navigation_profile:

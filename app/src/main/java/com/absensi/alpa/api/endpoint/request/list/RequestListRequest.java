@@ -1,4 +1,4 @@
-package com.absensi.alpa.api.endpoint.request;
+package com.absensi.alpa.api.endpoint.request.list;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

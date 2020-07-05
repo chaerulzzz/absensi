@@ -16,6 +16,11 @@ import java.util.List;
 public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.ViewHolder> {
 
     private List<Item> items;
+    private RequestInterface onItemClick;
+
+    public RequestItemAdapter(RequestInterface onItemClick) {
+        this.onItemClick = onItemClick;
+    }
 
     {
         this.items = new ArrayList<>();
@@ -35,6 +40,8 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
         holder.tvStatus.setText(item.getStatus());
         holder.tvPeriod.setText(item.getPeriod());
         holder.tvCreated.setText(item.getCreated());
+
+        holder.itemView.setOnClickListener(view -> onItemClick.onRequestClick(position, item.getId(), item.getTitle()));
     }
 
     @Override
@@ -42,7 +49,7 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
         return items.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView tvTitle, tvPeriod, tvCreated, tvStatus;
 
         public ViewHolder(@NonNull View itemView) {
@@ -56,6 +63,7 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
     }
 
     public static class Item {
+        private String id;
         private String title;
         private String period;
         private String created;
@@ -92,5 +100,25 @@ public class RequestItemAdapter extends RecyclerView.Adapter<RequestItemAdapter.
         public void setStatus(String status) {
             this.status = status;
         }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
+
+    public interface RequestInterface {
+        void onRequestClick(Integer position, String request_id, String type);
     }
 }

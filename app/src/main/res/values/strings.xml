@@ -31,6 +31,7 @@
 
     <string name="absent_in_title_activity">Absen Masuk</string>
     <string name="absent_out_title_activity">Absen Keluar</string>
+    <string name="absent_list_title_activity">Kehadiranku</string>
     <string name="absent_back_title_activity">Kembali</string>
 
     <string name="error_username_password_incorrect">Username atau password tidak sesuai</string>
@@ -49,5 +50,26 @@
     <string name="period_title_item_request_fragment">Periode :</string>
     <string name="created_title_item_request_fragment">Pembuat :</string>
 
-    <string name="item_no_absent_data">Belum Data</string>
+    <string name="sick_form_title">Form Tambah Pengajuan Sakit</string>
+    <string name="leave_form_title">Form Tambah Pengajuan Cuti</string>
+    <string name="permit_form_title">Form Tambah Pengajuan Izin</string>
+    <string name="overtime_form_title">Form Tambah Pengajuan Lembur</string>
+    <string name="approver_title">Atasan</string>
+    <string name="approver_name">Muhammad S</string>
+    <string name="request_from_title">Dari</string>
+    <string name="request_to_title">Sampai</string>
+    <string name="leave_total_title">Sisa Cuti</string>
+    <string name="reason_title">Alasan</string>
+    <string name="letter_sick_title">Tanggal surat sakit</string>
+    <string name="approval_request_title">Penyetujuan Pengajuan</string>
+    <string name="approval_status_title">Status</string>
+    <string name="document_number_title">Nomor Dokumen</string>
+
+    <string name="item_no_absent_data">Belum ada Data</string>
+    <string name="cancel">Batal</string>
+    <string name="save">Simpan</string>
+    <string name="pending">Tertunda</string>
+    <string name="search">Cari</string>
+    <string name="request_detail">Detail Pengajuan</string>
+    <string name="notes">Catatan</string>
 </resources>

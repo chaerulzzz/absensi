@@ -1,4 +1,4 @@
-package com.absensi.alpa.api.endpoint.request;
+package com.absensi.alpa.api.endpoint.request.list;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -17,17 +17,21 @@ public class RequestListDataResponse {
     @Expose
     private String requestCategory;
 
-    @SerializedName("date_start")
+    @SerializedName("start_date")
     @Expose
     private String requestDateStart;
 
-    @SerializedName("date_end")
+    @SerializedName("end_date")
     @Expose
     private String requestDateEnd;
 
     @SerializedName("status")
     @Expose
     private String requestStatus;
+
+    @SerializedName("requester")
+    @Expose
+    private String requester;
 
     public String getRequestId() {
         return requestId;
@@ -75,5 +79,13 @@ public class RequestListDataResponse {
 
     public void setRequestStatus(String requestStatus) {
         this.requestStatus = requestStatus;
+    }
+
+    public String getRequester() {
+        return requester;
+    }
+
+    public void setRequester(String requester) {
+        this.requester = requester;
     }
 }

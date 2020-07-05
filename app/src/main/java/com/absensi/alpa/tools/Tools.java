@@ -17,6 +17,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
@@ -27,9 +28,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class Tools {
 
@@ -205,7 +209,7 @@ public class Tools {
         return null;
     }
 
-    private static Bitmap rotateImage(Bitmap img, int degree) {
+    public static Bitmap rotateImage(Bitmap img, int degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         return Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
@@ -224,5 +228,39 @@ public class Tools {
         Log.d("bitmap size : ", String.valueOf((base64.length() / (1024))));
         Log.d("bitmap size : ", String.valueOf((byteArray.length / (1024))));
         return Base64.encodeToString(byteArray, Base64.DEFAULT);
+    }
+
+    public static boolean checkDates(String fromDate, String toDate , SimpleDateFormat dfDate)   {
+        boolean b = false;
+        try {
+            //If start date is after the end date
+            if(Objects.requireNonNull(dfDate.parse(fromDate)).before(dfDate.parse(toDate))) {
+                b = true;//If start date is before end date
+            } else b = Objects.equals(dfDate.parse(fromDate), dfDate.parse(toDate));//If two dates are equal
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return b;
+    }
+
+    public static void updateLabel(TextView textView, Calendar calendar) {
+        String myFormat = "dd-MM-yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        textView.setText(sdf.format(calendar.getTime()));
+    }
+
+    public static void updateLabel(TextView textView) {
+        String myFormat = "EEE, dd MMM yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        textView.setText(sdf.format(new Date()));
+    }
+
+    public static void updateTimeLabel(TextView tv1, Calendar calendar) {
+        String myFormat = "HH:mm";
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        tv1.setText(sdf.format(calendar.getTime()));
     }
 }
