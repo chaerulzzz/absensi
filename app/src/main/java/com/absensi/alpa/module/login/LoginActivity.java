@@ -17,6 +17,7 @@ import com.absensi.alpa.tools.Constant;
 import com.absensi.alpa.tools.DeviceUtil;
 import com.absensi.alpa.tools.LoadingDialog;
 import com.absensi.alpa.tools.Preferences;
+import com.absensi.alpa.tools.Tools;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
@@ -97,6 +98,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                             preferences.put(Constant.CREDENTIALS.NAME, dataResponse.getName());
                                             preferences.put(Constant.CREDENTIALS.SESSION, dataResponse.getToken());
                                             preferences.put(Constant.CREDENTIALS.USERID, dataResponse.getId());
+                                            preferences.put(Constant.CREDENTIALS.PASSWORD, tietPassword.getText().toString());
                                             preferences.commit();
 
                                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);

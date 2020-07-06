@@ -13,6 +13,9 @@ import com.absensi.alpa.api.endpoint.login.LoginRequest;
 import com.absensi.alpa.api.endpoint.login.LoginResponse;
 import com.absensi.alpa.api.endpoint.present.PresentRequest;
 import com.absensi.alpa.api.endpoint.present.PresentResponse;
+import com.absensi.alpa.api.endpoint.profile.ProfileEditRequest;
+import com.absensi.alpa.api.endpoint.profile.ProfileEditResponse;
+import com.absensi.alpa.api.endpoint.profile.ProfileResponse;
 import com.absensi.alpa.api.endpoint.request.detail.RequestDetailResponse;
 import com.absensi.alpa.api.endpoint.request.insert.RequestInsertRequest;
 import com.absensi.alpa.api.endpoint.request.insert.RequestInsertResponse;
@@ -58,4 +61,10 @@ public interface Parser {
 
     @PUT
     Call<ApprovalProcessResponse> sendApproval(@Url String url, @Body ApprovalProcessRequest request);
+
+    @GET
+    Call<ProfileResponse> getProfile(@Url String url);
+
+    @PUT
+    Call<ProfileEditResponse> sendProfile(@Url String url, @Body ProfileEditRequest request);
 }

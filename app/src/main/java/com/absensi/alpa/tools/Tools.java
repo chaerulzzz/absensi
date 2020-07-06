@@ -15,13 +15,18 @@ import android.os.Environment;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
 import com.absensi.alpa.R;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,6 +39,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Tools {
 
@@ -262,5 +269,76 @@ public class Tools {
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         tv1.setText(sdf.format(calendar.getTime()));
+    }
+
+    public static String generateHashedPass(String pass) {
+        return Bcrypt.hashpw(pass, Bcrypt.gensalt());
+    }
+
+    public static boolean generalValidation(@NonNull View mParentView, View mContentView,
+                                            @NonNull String mMessage, @NonNull Integer mType) {
+
+        if (mParentView instanceof TextInputLayout) {
+            TextInputLayout mInputLayout = (TextInputLayout) mParentView;
+
+            if (mContentView != null) {
+                if (mContentView instanceof TextInputEditText) {
+                    TextInputEditText mEdtText = (TextInputEditText) mContentView;
+
+                    if (TextUtils.isEmpty(mEdtText.getText().toString())) {
+                        mEdtText.requestFocus();
+                        mEdtText.setError(null);
+                        mInputLayout.setErrorEnabled(true);
+                        mInputLayout.setError(mMessage);
+
+                        return false;
+                    } else {
+                        if (mType == 1) {
+                            if (!emailValidation(mEdtText.getText().toString().trim())) {
+                                mEdtText.setError(null);
+                                mInputLayout.setErrorEnabled(true);
+                                mInputLayout.setError(mMessage);
+
+                                return false;
+                            }
+                        } else if (mType == 2) {
+                            if (mEdtText.getText().toString().length() < 6) {
+                                mEdtText.setError(null);
+                                mInputLayout.setErrorEnabled(true);
+                                mInputLayout.setError(mMessage);
+
+                                return false;
+                            }
+                        } else if (mType == 3) {
+                            if (mEdtText.getText().toString().length() > 15 || mEdtText.getText().toString().length() < 11) {
+                                mEdtText.setError(null);
+                                mInputLayout.setErrorEnabled(true);
+                                mInputLayout.setError(mMessage);
+
+                                return false;
+                            }
+                        }
+                    }
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean emailValidation(String mEmail) {
+
+        if (!TextUtils.isEmpty(mEmail)) {
+            String expression = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+            Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(mEmail);
+            return matcher.matches();
+        }
+
+        return false;
     }
 }

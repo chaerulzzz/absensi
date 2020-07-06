@@ -22,12 +22,10 @@ public class Constant {
     public enum CREDENTIALS {
         SESSION,
         PASSWORD,
-        ABSENT_IMAGE,
-        LETTER_SICK,
-        NOTES,
-        PRESENCE,
         EMAIL,
         NAME,
-        USERID
+        USERID,
+        BIRTH_DATE,
+        BIRTH_PLACE
     }
 }
