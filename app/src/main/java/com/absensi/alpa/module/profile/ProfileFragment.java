@@ -1,10 +1,12 @@
 package com.absensi.alpa.module.profile;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,10 +15,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.absensi.alpa.R;
+import com.absensi.alpa.api.endpoint.GeneralResponse;
+import com.absensi.alpa.api.endpoint.logout.LogoutService;
 import com.absensi.alpa.api.endpoint.profile.ProfileDataResponse;
 import com.absensi.alpa.api.endpoint.profile.ProfileResponse;
 import com.absensi.alpa.api.endpoint.profile.ProfileService;
 import com.absensi.alpa.module.home.DashboardFragment;
+import com.absensi.alpa.module.home.HomeActivity;
+import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
 import com.absensi.alpa.tools.Preferences;
 import com.absensi.alpa.tools.Tools;
@@ -39,6 +45,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     private TextView tvName, tvEmail, tvBirthPlace, tvBirthDate;
     private MaterialButton btnEdit;
+    private ImageView btnLogout;
 
     @Nullable
     @Override
@@ -57,6 +64,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         this.tvBirthPlace = view.findViewById(R.id.tvBirthPlace);
         this.btnEdit = view.findViewById(R.id.btnEdit);
         this.btnEdit.setOnClickListener(this);
+
+        this.btnLogout = view.findViewById(R.id.btnLogout);
+        this.btnLogout.setOnClickListener(this);
     }
 
     private void setData(){
@@ -117,6 +127,40 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         if (v.equals(btnEdit)) {
             ProfileEditFragment bottomSheetFragment = new ProfileEditFragment(requireActivity());
             bottomSheetFragment.show (requireActivity().getSupportFragmentManager(), bottomSheetFragment.getTag());
+        } else if (v.equals(btnLogout)) {
+            Call<GeneralResponse> responseCall = LogoutService.callLogout(requireActivity(), "/api/logout");
+            responseCall.enqueue(new Callback<GeneralResponse>() {
+                @Override
+                public void onResponse(@NotNull Call<GeneralResponse> call, @NotNull Response<GeneralResponse> response) {
+                    if (response.isSuccessful()) {
+                        GeneralResponse generalResponse = response.body();
+
+                        if (generalResponse != null) {
+                            if (generalResponse.getCode().equalsIgnoreCase("200")) {
+                                Preferences preferences = Preferences.getInstance();
+                                preferences.begin();
+                                preferences.put(Constant.CREDENTIALS.SESSION, "");
+                                preferences.commit();
+
+                                requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                                requireActivity().finish();
+                            }
+                        }
+                    } else {
+                        try {
+                            JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
+                            Toast.makeText(ProfileFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(ProfileFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(@NotNull Call<GeneralResponse> call, @NotNull Throwable t) {
+                    Toast.makeText(ProfileFragment.this.getContext(), ProfileFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

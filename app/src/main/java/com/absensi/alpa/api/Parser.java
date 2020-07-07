@@ -1,5 +1,6 @@
 package com.absensi.alpa.api;
 
+import com.absensi.alpa.api.endpoint.GeneralResponse;
 import com.absensi.alpa.api.endpoint.approval.list.ApprovalListResponse;
 import com.absensi.alpa.api.endpoint.approval.process.ApprovalProcessRequest;
 import com.absensi.alpa.api.endpoint.approval.process.ApprovalProcessResponse;
@@ -67,4 +68,7 @@ public interface Parser {
 
     @PUT
     Call<ProfileEditResponse> sendProfile(@Url String url, @Body ProfileEditRequest request);
+
+    @POST
+    Call<GeneralResponse> sendLogout(@Url String url);
 }
