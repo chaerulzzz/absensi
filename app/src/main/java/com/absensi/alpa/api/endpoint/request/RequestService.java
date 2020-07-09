@@ -9,6 +9,7 @@ import com.absensi.alpa.api.endpoint.request.insert.RequestInsertRequest;
 import com.absensi.alpa.api.endpoint.request.insert.RequestInsertResponse;
 import com.absensi.alpa.api.endpoint.request.list.RequestListRequest;
 import com.absensi.alpa.api.endpoint.request.list.RequestListResponse;
+import com.absensi.alpa.tools.Constant;
 
 import retrofit2.Call;
 
@@ -39,10 +40,17 @@ public class RequestService {
             String endDate
     ) {
         RequestInsertRequest request = new RequestInsertRequest();
-        request.setCategoryId(String.valueOf(1));
+
+        if (!url.equalsIgnoreCase(Constant.URL.SICK)) {
+            request.setCategoryId(String.valueOf(1));
+        }
+
+        if (url.equalsIgnoreCase(Constant.URL.SICK)) {
+            request.setHospitalization("Y");
+        }
+
         request.setStartDate(startDate);
         request.setEndDate(endDate);
-        request.setHospitalization("Y");
         request.setLetterDate(letterDate);
         request.setLetter(letter);
         request.setReason(reason);

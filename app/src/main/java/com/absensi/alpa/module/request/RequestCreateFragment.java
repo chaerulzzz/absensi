@@ -39,7 +39,10 @@ import com.absensi.alpa.api.endpoint.request.insert.RequestInsertRequest;
 import com.absensi.alpa.api.endpoint.request.insert.RequestInsertResponse;
 import com.absensi.alpa.module.absence.AbsenceDetailFragment;
 import com.absensi.alpa.module.home.HomeActivity;
+import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.LoadingDialog;
+import com.absensi.alpa.tools.Preferences;
 import com.absensi.alpa.tools.Tools;
 import com.google.android.material.button.MaterialButton;
 
@@ -281,6 +284,9 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
     }
 
     private void insertRequest(){
+        LoadingDialog dialog = new LoadingDialog(requireContext());
+        dialog.show();
+
         String url;
         if (type == 0) {
             url = Constant.URL.LEAVE;
@@ -311,24 +317,40 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
 
                     if (requestInsertResponse != null) {
                         if (requestInsertResponse.getCode().equalsIgnoreCase("200")) {
+                            dialog.dismiss();
+
                             Toast.makeText(RequestCreateFragment.this.getContext(), "Pembuatan Pengajuan sukses", Toast.LENGTH_SHORT).show();
                             ((HomeActivity)RequestCreateFragment.this.requireActivity()).getSupportFragmentManager().popBackStackImmediate();
                         }
                     } else {
+                        dialog.dismiss();
                         Toast.makeText(RequestCreateFragment.this.getContext(), RequestCreateFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
                         Toast.makeText(RequestCreateFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+
+                        if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                            Preferences preferences = Preferences.getInstance();
+                            preferences.begin();
+                            preferences.put(Constant.CREDENTIALS.SESSION, "");
+                            preferences.commit();
+
+                            requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                            requireActivity().finish();
+                        }
                     } catch (Exception e) {
                         Toast.makeText(RequestCreateFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    } finally {
+                        dialog.dismiss();
                     }
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<RequestInsertResponse> call, @NotNull Throwable t) {
+                dialog.dismiss();
                 Toast.makeText(RequestCreateFragment.this.getContext(), RequestCreateFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
             }
         });

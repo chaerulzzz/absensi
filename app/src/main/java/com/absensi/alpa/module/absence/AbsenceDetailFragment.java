@@ -31,7 +31,9 @@ import com.absensi.alpa.R;
 import com.absensi.alpa.api.endpoint.present.PresentResponse;
 import com.absensi.alpa.api.endpoint.present.PresentService;
 import com.absensi.alpa.module.home.HomeActivity;
+import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.Preferences;
 import com.absensi.alpa.tools.Tools;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -283,6 +285,16 @@ public class AbsenceDetailFragment extends Fragment implements View.OnClickListe
                         try {
                             JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
                             Toast.makeText(AbsenceDetailFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+
+                            if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                                Preferences preferences = Preferences.getInstance();
+                                preferences.begin();
+                                preferences.put(Constant.CREDENTIALS.SESSION, "");
+                                preferences.commit();
+
+                                requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                                requireActivity().finish();
+                            }
                         } catch (Exception e) {
                             Toast.makeText(AbsenceDetailFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }

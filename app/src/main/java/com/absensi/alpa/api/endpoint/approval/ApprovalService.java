@@ -31,10 +31,11 @@ public class ApprovalService {
         request.setId(id);
         request.setStatus(status);
         request.setNotes(notes);
+        request.setMethod("PUT");
 
         return Api.getRetrofit(activity)
                 .create(Parser.class)
-                .sendApproval(url, request);
+                .sendApproval(url + "/" + id, request);
     }
 }
 

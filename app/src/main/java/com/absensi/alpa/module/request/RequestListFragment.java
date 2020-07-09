@@ -1,6 +1,7 @@
 package com.absensi.alpa.module.request;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,9 @@ import com.absensi.alpa.api.endpoint.request.RequestService;
 import com.absensi.alpa.api.endpoint.request.list.RequestListDataResponse;
 import com.absensi.alpa.api.endpoint.request.list.RequestListResponse;
 import com.absensi.alpa.module.home.HomeActivity;
+import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.Preferences;
 import com.google.android.material.button.MaterialButton;
 
 import org.jetbrains.annotations.NotNull;
@@ -138,6 +141,16 @@ public class RequestListFragment extends Fragment implements View.OnClickListene
                         try {
                             JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
                             Toast.makeText(RequestListFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+
+                            if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                                Preferences preferences = Preferences.getInstance();
+                                preferences.begin();
+                                preferences.put(Constant.CREDENTIALS.SESSION, "");
+                                preferences.commit();
+
+                                requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                                requireActivity().finish();
+                            }
                         } catch (Exception e) {
                             Toast.makeText(RequestListFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }

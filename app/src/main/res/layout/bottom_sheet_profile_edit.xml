@@ -100,19 +100,22 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="20dp"
-        android:textColorHint="@android:color/transparent"
-        android:background="@android:color/transparent">
+        app:boxStrokeColor="@color/profileBackgroundColor"
+        app:boxStrokeWidth="2dp"
+        app:endIconMode="password_toggle"
+        app:passwordToggleTint="@android:color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tietOldPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:background="@android:color/white"
             android:inputType="textPassword"
+            android:background="@android:color/white"
             android:maxLines="1"
             android:textAllCaps="false"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            app:endIconMode="password_toggle"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -131,18 +134,20 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="20dp"
-        android:textColorHint="@android:color/transparent"
-        android:background="@android:color/transparent">
+        app:boxStrokeWidth="2dp"
+        app:endIconMode="password_toggle"
+        app:passwordToggleEnabled="true"
+        app:endIconTint="@android:color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tietNewPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="5dp"
-            android:background="@android:color/white"
             android:inputType="textPassword"
             android:maxLines="1"
             android:textAllCaps="false"
+            android:background="@android:color/transparent"
             android:textColor="@android:color/black"/>
     </com.google.android.material.textfield.TextInputLayout>
 

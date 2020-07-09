@@ -1,5 +1,6 @@
 package com.absensi.alpa.module.request;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,7 +19,9 @@ import com.absensi.alpa.api.endpoint.request.list.RequestListDataResponse;
 import com.absensi.alpa.api.endpoint.request.list.RequestListResponse;
 import com.absensi.alpa.api.endpoint.request.RequestService;
 import com.absensi.alpa.module.home.HomeActivity;
+import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.Preferences;
 import com.google.android.material.card.MaterialCardView;
 
 import org.jetbrains.annotations.NotNull;
@@ -126,6 +129,16 @@ public class RequestFragment extends Fragment implements View.OnClickListener, R
                         try {
                             JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
                             Toast.makeText(RequestFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+
+                            if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                                Preferences preferences = Preferences.getInstance();
+                                preferences.begin();
+                                preferences.put(Constant.CREDENTIALS.SESSION, "");
+                                preferences.commit();
+
+                                requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                                requireActivity().finish();
+                            }
 
                             tvNoData.setVisibility(View.VISIBLE);
                             recyclerView.setVisibility(View.GONE);

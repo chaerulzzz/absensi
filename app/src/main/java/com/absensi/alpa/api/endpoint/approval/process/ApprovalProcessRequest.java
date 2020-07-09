@@ -17,6 +17,10 @@ public class ApprovalProcessRequest {
     @Expose
     private String notes;
 
+    @SerializedName("_method")
+    @Expose
+    private String method;
+
     public String getId() {
         return id;
     }
@@ -39,5 +43,13 @@ public class ApprovalProcessRequest {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
     }
 }

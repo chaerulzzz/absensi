@@ -1,5 +1,6 @@
 package com.absensi.alpa.module.approval;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,9 +24,11 @@ import com.absensi.alpa.api.endpoint.approval.list.ApprovalListDataResponse;
 import com.absensi.alpa.api.endpoint.approval.list.ApprovalListResponse;
 import com.absensi.alpa.entity.ApprovalEntity;
 import com.absensi.alpa.module.home.HomeActivity;
+import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.module.request.RequestDetailFragment;
 import com.absensi.alpa.module.request.RequestItemAdapter;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.Preferences;
 import com.google.android.material.card.MaterialCardView;
 
 import org.jetbrains.annotations.NotNull;
@@ -177,6 +180,16 @@ public class ApprovalFragment extends Fragment implements View.OnClickListener, 
                     try {
                         JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
                         Toast.makeText(ApprovalFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+
+                        if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                            Preferences preferences = Preferences.getInstance();
+                            preferences.begin();
+                            preferences.put(Constant.CREDENTIALS.SESSION, "");
+                            preferences.commit();
+
+                            requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                            requireActivity().finish();
+                        }
                     } catch (Exception e) {
                         Toast.makeText(ApprovalFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }

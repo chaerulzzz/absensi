@@ -2,6 +2,7 @@ package com.absensi.alpa.module.profile;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -23,7 +24,9 @@ import com.absensi.alpa.api.endpoint.profile.ProfileDataResponse;
 import com.absensi.alpa.api.endpoint.profile.ProfileEditResponse;
 import com.absensi.alpa.api.endpoint.profile.ProfileService;
 import com.absensi.alpa.module.home.HomeActivity;
+import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.LoadingDialog;
 import com.absensi.alpa.tools.Preferences;
 import com.absensi.alpa.tools.Tools;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -79,9 +82,7 @@ public class ProfileEditFragment extends BottomSheetDialogFragment implements Vi
         this.tvBirthDate = view.findViewById(R.id.tvBirthDate);
         this.etBirthPlace = view.findViewById(R.id.etBirthPlace);
         this.tilOldPassword = view.findViewById(R.id.tilOldPassword);
-        this.tilOldPassword.getEditText().setTransformationMethod(PasswordTransformationMethod.getInstance());
         this.tilNewPassword = view.findViewById(R.id.tilNewPassword);
-        this.tilNewPassword.getEditText().setTransformationMethod(PasswordTransformationMethod.getInstance());
 
         this.tietNewPassword = view.findViewById(R.id.tietNewPassword);
         this.tietNewPassword.addTextChangedListener(new TextWatcher() {
@@ -94,8 +95,6 @@ public class ProfileEditFragment extends BottomSheetDialogFragment implements Vi
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
                     tietNewPassword.setError(null);
-                    tilNewPassword.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
-                    tilNewPassword.setEndIconTintList(ContextCompat.getColorStateList(activity, android.R.color.black));
                 } else {
                     tilNewPassword.setEndIconMode(TextInputLayout.END_ICON_NONE);
                 }
@@ -118,8 +117,6 @@ public class ProfileEditFragment extends BottomSheetDialogFragment implements Vi
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() > 0) {
                     tietOldPassword.setError(null);
-                    tilOldPassword.setEndIconMode(TextInputLayout.END_ICON_PASSWORD_TOGGLE);
-                    tilOldPassword.setEndIconTintList(ContextCompat.getColorStateList(activity, android.R.color.black));
                 } else {
                     tilOldPassword.setEndIconMode(TextInputLayout.END_ICON_NONE);
                 }
@@ -181,7 +178,7 @@ public class ProfileEditFragment extends BottomSheetDialogFragment implements Vi
             String mOldPassword = Preferences.getInstance().getValue(Constant.CREDENTIALS.PASSWORD, String.class, "");
             String mOldPassword1 = tietOldPassword.getText().toString();
 
-            if (mOldPassword.equals(mOldPassword1)) {
+            if (mOldPassword.equalsIgnoreCase(mOldPassword1)) {
                 password = Tools.generateHashedPass(tietNewPassword.getText().toString().trim());
             } else {
                 tietOldPassword.setError(null);
@@ -197,6 +194,9 @@ public class ProfileEditFragment extends BottomSheetDialogFragment implements Vi
 
     private void sendData() {
         if (isValid()) {
+            LoadingDialog dialog = new LoadingDialog(requireContext());
+            dialog.show();
+
             String mOldPassword = Preferences.getInstance().getValue(Constant.CREDENTIALS.PASSWORD, String.class, "");
             String userid = Preferences.getInstance().getValue(Constant.CREDENTIALS.USERID, String.class, "");
 
@@ -225,15 +225,34 @@ public class ProfileEditFragment extends BottomSheetDialogFragment implements Vi
                                 preferences.put(Constant.CREDENTIALS.BIRTH_DATE, dataResponse.getBirthDate());
                                 preferences.commit();
 
-                                ((HomeActivity)activity).getSupportFragmentManager().popBackStackImmediate();
+                                Toast.makeText(ProfileEditFragment.this.getContext(), "Ubah profil sukses", Toast.LENGTH_LONG).show();
+
+                                dismiss();
                             }
+
+                            dialog.dismiss();
                         } else {
                             Toast.makeText(ProfileEditFragment.this.getContext(), activity.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_LONG).show();
+
+                            dialog.dismiss();
                         }
                     } else {
                         try {
                             JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
                             Toast.makeText(ProfileEditFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+
+                            if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                                Preferences preferences = Preferences.getInstance();
+                                preferences.begin();
+                                preferences.put(Constant.CREDENTIALS.SESSION, "");
+                                preferences.commit();
+
+                                requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                                dismiss();
+
+                                requireActivity().finish();
+                            }
+                            dialog.dismiss();
                         } catch (Exception e) {
                             Toast.makeText(ProfileEditFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
@@ -243,6 +262,8 @@ public class ProfileEditFragment extends BottomSheetDialogFragment implements Vi
                 @Override
                 public void onFailure(Call<ProfileEditResponse> call, Throwable t) {
                     Toast.makeText(ProfileEditFragment.this.getContext(), activity.getString(R.string.error_not_connected_to_server), Toast.LENGTH_LONG).show();
+
+                    dialog.dismiss();
                 }
             });
         }

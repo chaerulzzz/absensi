@@ -109,6 +109,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     try {
                         JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
                         Toast.makeText(ProfileFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+
+                        if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                            Preferences preferences = Preferences.getInstance();
+                            preferences.begin();
+                            preferences.put(Constant.CREDENTIALS.SESSION, "");
+                            preferences.commit();
+
+                            requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                            requireActivity().finish();
+                        }
                     } catch (Exception e) {
                         Toast.makeText(ProfileFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
@@ -150,6 +160,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         try {
                             JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
                             Toast.makeText(ProfileFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+
+                            if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                                Preferences preferences = Preferences.getInstance();
+                                preferences.begin();
+                                preferences.put(Constant.CREDENTIALS.SESSION, "");
+                                preferences.commit();
+
+                                requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                                requireActivity().finish();
+                            }
                         } catch (Exception e) {
                             Toast.makeText(ProfileFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }

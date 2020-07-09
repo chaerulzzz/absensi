@@ -60,7 +60,7 @@ public class Preferences {
             Log.e(TAG, "You must call begin() first.");
             return;
         }
-        this.mEditor.commit();
+        this.mEditor.apply();
     }
 
     public void setSharedPreferences(SharedPreferences mSharedPreferences) {

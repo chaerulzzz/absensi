@@ -60,7 +60,7 @@ public interface Parser {
     @GET
     Call<ApprovalListResponse> getList(@Url String url);
 
-    @PUT
+    @POST
     Call<ApprovalProcessResponse> sendApproval(@Url String url, @Body ApprovalProcessRequest request);
 
     @GET
