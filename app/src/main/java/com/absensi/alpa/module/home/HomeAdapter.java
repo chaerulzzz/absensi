@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.absensi.alpa.R;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 
 public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
@@ -39,10 +41,19 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         if (!item.getTime().equalsIgnoreCase("")) {
             SimpleDateFormat day = new SimpleDateFormat("EEEE", Locale.getDefault());
             SimpleDateFormat date = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+            SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
             holder.tvSubtitleDay.setText(day.format(new Date()));
             holder.tvSubtitleDate.setText(date.format(new Date()));
-            holder.tvTime.setText(item.getTime());
+            try {
+                holder.tvTime.setText(timeFormat.format(Objects.requireNonNull(time.parse(item.getTime()))));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            holder.llMainView.setVisibility(View.VISIBLE);
+            holder.tvNoData.setVisibility(View.GONE);
         } else {
             holder.llMainView.setVisibility(View.GONE);
             holder.tvNoData.setVisibility(View.VISIBLE);
