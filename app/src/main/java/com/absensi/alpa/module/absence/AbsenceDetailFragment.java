@@ -33,6 +33,7 @@ import com.absensi.alpa.api.endpoint.present.PresentService;
 import com.absensi.alpa.module.home.HomeActivity;
 import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.LoadingDialog;
 import com.absensi.alpa.tools.Preferences;
 import com.absensi.alpa.tools.Tools;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -251,6 +252,9 @@ public class AbsenceDetailFragment extends Fragment implements View.OnClickListe
     }
 
     private void sendPresence(int type) {
+        LoadingDialog dialog = new LoadingDialog(requireContext());
+        dialog.show();
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss", Locale.getDefault());
         Call<PresentResponse> responseCall = PresentService.sendPresence(
                 this.requireActivity(),
@@ -301,11 +305,15 @@ public class AbsenceDetailFragment extends Fragment implements View.OnClickListe
                     }
                 } catch (Exception ex) {
                     Toast.makeText(AbsenceDetailFragment.this.getContext(), AbsenceDetailFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                } finally {
+                    dialog.dismiss();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<PresentResponse> call, @NotNull Throwable t) {
+                t.printStackTrace();
+                dialog.dismiss();
                 Toast.makeText(AbsenceDetailFragment.this.getContext(), AbsenceDetailFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
             }
         });

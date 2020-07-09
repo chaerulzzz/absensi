@@ -27,7 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="22dp"
-        android:text="@string/user_text_activity_home"
         android:textColor="@android:color/black"
         android:textSize="24sp"
         android:textStyle="bold"

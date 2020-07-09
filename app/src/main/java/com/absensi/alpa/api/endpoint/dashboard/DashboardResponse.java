@@ -4,17 +4,19 @@ import com.absensi.alpa.api.endpoint.GeneralResponse;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class DashboardResponse extends GeneralResponse {
 
     @SerializedName("data")
     @Expose
-    private DashboardDataResponse data;
+    private List<DashboardDataResponse> data;
 
-    public DashboardDataResponse getData() {
+    public List<DashboardDataResponse> getData() {
         return data;
     }
 
-    public void setData(DashboardDataResponse data) {
+    public void setData(List<DashboardDataResponse> data) {
         this.data = data;
     }
 }

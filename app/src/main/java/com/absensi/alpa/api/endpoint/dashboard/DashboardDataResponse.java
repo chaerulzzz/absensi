@@ -29,6 +29,10 @@ public class DashboardDataResponse {
     @Expose
     private String lateIn;
 
+    @SerializedName("user_name")
+    @Expose
+    private String userName;
+
     public String getTimeIn() {
         return timeIn;
     }
@@ -75,5 +79,13 @@ public class DashboardDataResponse {
 
     public void setLateIn(String lateIn) {
         this.lateIn = lateIn;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
