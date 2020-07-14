@@ -6,19 +6,28 @@ import io.realm.annotations.PrimaryKey;
 public class ApprovalEntity extends RealmObject {
 
     @PrimaryKey
-    private Long id;
+    private String id;
+    private Long requestId;
     private String type;
     private String dateStart;
     private String dateEnd;
     private String requester;
     private String status;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public Long getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Long requestId) {
+        this.requestId = requestId;
     }
 
     public String getType() {

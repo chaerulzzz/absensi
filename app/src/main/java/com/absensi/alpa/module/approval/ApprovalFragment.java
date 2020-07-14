@@ -28,6 +28,7 @@ import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.module.request.RequestDetailFragment;
 import com.absensi.alpa.module.request.RequestItemAdapter;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.LoadingDialog;
 import com.absensi.alpa.tools.Preferences;
 import com.google.android.material.card.MaterialCardView;
 
@@ -38,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import io.realm.Realm;
 import io.realm.RealmQuery;
@@ -113,91 +115,103 @@ public class ApprovalFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void getData() {
+        LoadingDialog dialog = new LoadingDialog(requireContext());
+        dialog.show();
+
         type = 0;
         Call<ApprovalListResponse> responseCall = ApprovalService.getApprovalList(requireActivity(), Constant.URL.APPROVAL);
 
         responseCall.enqueue(new Callback<ApprovalListResponse>() {
             @Override
             public void onResponse(@NotNull Call<ApprovalListResponse> call, @NotNull Response<ApprovalListResponse> response) {
-                if (response.isSuccessful()) {
-                    ApprovalListResponse listResponse = response.body();
+                try {
+                    if (response.isSuccessful()) {
+                        ApprovalListResponse listResponse = response.body();
 
-                    if (listResponse != null) {
-                        lstNameFilter.clear();
-                        lstStatusFilter.clear();
+                        if (listResponse != null) {
+                            lstNameFilter.clear();
+                            lstStatusFilter.clear();
 
-                        lstNameFilter.add("Semua");
-                        lstStatusFilter.add("Semua");
+                            lstNameFilter.add("Semua");
+                            lstStatusFilter.add("Semua");
 
-                        realm.executeTransaction(realm1 -> {
-                            realm1.delete(ApprovalEntity.class);
+                            realm.executeTransaction(realm1 -> {
+                                realm1.delete(ApprovalEntity.class);
 
-                            for(ApprovalListDataResponse dataResponse: listResponse.getData()){
-                                ApprovalEntity entity = new ApprovalEntity();
-                                entity.setId(Long.parseLong(dataResponse.getId()));
-                                entity.setDateStart(dataResponse.getDateStart());
-                                entity.setDateEnd(dataResponse.getDateEnd());
-                                entity.setStatus(dataResponse.getStatus());
-                                entity.setType(dataResponse.getType());
-                                entity.setRequester(dataResponse.getRequester());
+                                for(ApprovalListDataResponse dataResponse: listResponse.getData()){
+                                    ApprovalEntity entity = realm1.createObject(ApprovalEntity.class, UUID.randomUUID().toString());
+                                    entity.setRequestId(Long.parseLong(dataResponse.getId()));
+                                    entity.setDateStart(dataResponse.getDateStart());
+                                    entity.setDateEnd(dataResponse.getDateEnd());
+                                    entity.setStatus(dataResponse.getStatus());
+                                    entity.setType(dataResponse.getType());
+                                    entity.setRequester(dataResponse.getRequester());
 
-                                realm1.copyToRealmOrUpdate(entity);
+                                    realm1.copyToRealmOrUpdate(entity);
+                                }
+                            });
+
+                            for (ApprovalListDataResponse detail: listResponse.getData()) {
+
+                                if (!lstNameFilter.contains(detail.getRequester())){
+                                    lstNameFilter.add(detail.getRequester());
+                                }
+
+                                if (!lstStatusFilter.contains(detail.getStatus())) {
+                                    lstStatusFilter.add(detail.getStatus());
+                                }
                             }
-                        });
 
-                        for (ApprovalListDataResponse detail: listResponse.getData()) {
+                            nameAdapter.notifyDataSetChanged();
+                            statusAdapter.notifyDataSetChanged();
 
-                            if (!lstNameFilter.contains(detail.getRequester())){
-                                lstNameFilter.add(detail.getRequester());
-                            }
-
-                            if (!lstStatusFilter.contains(detail.getStatus())) {
-                                lstStatusFilter.add(detail.getStatus());
+                            if (type == 0) {
+                                setTabColor(tvPending);
+                                prepareData("New");
+                            } else if (type == 1) {
+                                setTabColor(tvLeave);
+                                prepareData("Leave Request");
+                            } else if (type == 2) {
+                                setTabColor(tvPermit);
+                                prepareData("Permit Request");
+                            } else if (type == 3) {
+                                setTabColor(tvSick);
+                                prepareData("Sick Request");
+                            } else if (type == 4) {
+                                setTabColor(tvOvertime);
+                                prepareData("Overtime Request");
                             }
                         }
+                    } else {
+                        try {
+                            JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
+                            Toast.makeText(ApprovalFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
 
-                        nameAdapter.notifyDataSetChanged();
-                        statusAdapter.notifyDataSetChanged();
+                            if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                                Preferences preferences = Preferences.getInstance();
+                                preferences.begin();
+                                preferences.put(Constant.CREDENTIALS.SESSION, "");
+                                preferences.commit();
 
-                        if (type == 0) {
-                            setTabColor(tvPending);
-                            prepareData("Awaiting");
-                        } else if (type == 1) {
-                            setTabColor(tvLeave);
-                            prepareData("Leave Request");
-                        } else if (type == 2) {
-                            setTabColor(tvPermit);
-                            prepareData("Permit Request");
-                        } else if (type == 3) {
-                            setTabColor(tvSick);
-                            prepareData("Sick Request");
-                        } else if (type == 4) {
-                            setTabColor(tvOvertime);
-                            prepareData("Overtime Request");
+                                requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                                requireActivity().finish();
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(ApprovalFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
-                } else {
-                    try {
-                        JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
-                        Toast.makeText(ApprovalFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
-
-                        if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
-                            Preferences preferences = Preferences.getInstance();
-                            preferences.begin();
-                            preferences.put(Constant.CREDENTIALS.SESSION, "");
-                            preferences.commit();
-
-                            requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
-                            requireActivity().finish();
-                        }
-                    } catch (Exception e) {
-                        Toast.makeText(ApprovalFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                } catch (Exception ex) {
+                    Toast.makeText(requireContext(), requireActivity().getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                    ex.printStackTrace();
+                } finally {
+                    dialog.dismiss();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<ApprovalListResponse> call, @NotNull Throwable t) {
+                dialog.dismiss();
+                t.printStackTrace();
                 Toast.makeText(ApprovalFragment.this.getContext(), ApprovalFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
             }
         });
@@ -207,7 +221,7 @@ public class ApprovalFragment extends Fragment implements View.OnClickListener, 
     public void onClick(View view) {
         if (view.equals(cvPending)) {
             setTabColor(tvPending);
-            prepareData("Awaiting");
+            prepareData("New");
             this.type = 0;
         } else if (view.equals(cvLeave)) {
             setTabColor(tvLeave);
@@ -246,7 +260,7 @@ public class ApprovalFragment extends Fragment implements View.OnClickListener, 
         }
 
         if (type == 0) {
-            prepareData("Awaiting");
+            prepareData("New");
         } else if (type == 1) {
             prepareData("Leave Request");
         } else if (type == 2) {
@@ -310,7 +324,7 @@ public class ApprovalFragment extends Fragment implements View.OnClickListener, 
                             item.setTitle(entity.getType());
 
                             String period = entity.getDateStart() + " - " + entity.getDateEnd();
-                            item.setId(entity.getId().toString());
+                            item.setId(entity.getRequestId().toString());
                             item.setPeriod(period);
                             item.setStatus(entity.getStatus());
                             item.setCreated(entity.getRequester());

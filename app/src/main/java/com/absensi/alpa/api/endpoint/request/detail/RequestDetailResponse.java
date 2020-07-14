@@ -11,13 +11,13 @@ public class RequestDetailResponse extends GeneralResponse implements Serializab
 
     @SerializedName("data")
     @Expose
-    private List<RequestDetailDataResponse> data;
+    private RequestDetailDataResponse data;
 
-    public List<RequestDetailDataResponse> getData() {
+    public RequestDetailDataResponse getData() {
         return data;
     }
 
-    public void setData(List<RequestDetailDataResponse> data) {
+    public void setData(RequestDetailDataResponse data) {
         this.data = data;
     }
 }

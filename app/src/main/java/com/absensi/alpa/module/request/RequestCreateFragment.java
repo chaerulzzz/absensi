@@ -21,9 +21,12 @@ import android.provider.OpenableColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,8 +56,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -67,9 +72,9 @@ import static com.absensi.alpa.tools.Tools.rotateImage;
 import static com.absensi.alpa.tools.Tools.updateLabel;
 import static com.absensi.alpa.tools.Tools.updateTimeLabel;
 
-public class RequestCreateFragment extends Fragment implements View.OnClickListener {
+public class RequestCreateFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
-    private TextView tvDateNow, tvTitle, tvApprover, tvLeaveTotalTitle , tvLeaveTotal, tvDateFrom, tvTimeFrom, tvDateTo, tvTimeTo, tvSickLetterDate;
+    private TextView tvDateNow, tvTitle, tvApprover, tvLeaveTotalTitle , tvLeaveTotal, tvDateFrom, tvTimeFrom, tvDateTo, tvTimeTo, tvSickLetterDate, spinnerTitle;
     private LinearLayout llDateFrom, llTimeFrom, llDateTo, llTimeTo, llSickView, llImage, llSickLetterDate;
     private EditText etReason;
     private MaterialButton btnCancel, btnSave;
@@ -79,6 +84,9 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
     private TimePickerDialog.OnTimeSetListener timeFrom, timeTo;
     private ImageView ivPhoto;
     private String imageValue, pathImage;
+    private Spinner spinner;
+    private ArrayAdapter<String> categoryAdapter;
+    private String categorySelected;
 
     public RequestCreateFragment(int type) {
         this.type = type;
@@ -132,10 +140,16 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
     }
 
     private void init(View view) {
+        Preferences preferences = Preferences.getInstance();
+
         this.tvDateNow = view.findViewById(R.id.tvDateNow);
         this.tvTitle = view.findViewById(R.id.tvTitle);
         this.tvApprover = view.findViewById(R.id.tvApprover);
+        this.tvApprover.setText(preferences.getValue(Constant.CREDENTIALS.APPROVER, String.class, ""));
+
         this.tvLeaveTotal = view.findViewById(R.id.tvLeaveTotal);
+        this.tvLeaveTotal.setText(preferences.getValue(Constant.CREDENTIALS.TOTAL_LEAVE, String.class, ""));
+
         this.tvDateFrom = view.findViewById(R.id.tvDateFrom);
         this.tvTimeFrom = view.findViewById(R.id.tvTimeFrom);
         this.tvDateTo = view.findViewById(R.id.tvDateTo);
@@ -170,6 +184,27 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
         this.btnSave.setOnClickListener(this);
 
         this.ivPhoto = view.findViewById(R.id.ivPhoto);
+
+        this.spinner = view.findViewById(R.id.spinner);
+        this.spinnerTitle = view.findViewById(R.id.spinnerTitle);
+        List<String> lstStatus = new ArrayList<>();
+
+        if (type == 0){
+            lstStatus.add("Tahunan");
+            lstStatus.add("Potong Gaji");
+            lstStatus.add("Melahirkan");
+        } else if (type == 2){
+            lstStatus.add("Perjalanan Dinas");
+            lstStatus.add("Keperluan Pribadi");
+            lstStatus.add("Lainnya");
+        } else {
+            spinner.setVisibility(View.GONE);
+            spinnerTitle.setVisibility(View.GONE);
+        }
+
+        categoryAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_dropdown_item, lstStatus);
+        spinner.setAdapter(categoryAdapter);
+        spinner.setOnItemSelectedListener(this);
 
         calendarFrom = Calendar.getInstance();
         calendarTo = Calendar.getInstance();
@@ -267,10 +302,10 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
         if (type == 1) {
             return imageValue != null;
         } else if (type == 3 || type == 2) {
-            String dateFrom = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarFrom.getTime()) + " " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(clTimeFrom.getTime());
-            String dateTo = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarTo.getTime()) + " " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(clTimeTo.getTime());
+            String dateFrom = new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(calendarFrom.getTime()) + " " + new SimpleDateFormat("HH:mm", new Locale("id", "ID")).format(clTimeFrom.getTime());
+            String dateTo = new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(calendarTo.getTime()) + " " + new SimpleDateFormat("HH:mm", new Locale("id", "ID")).format(clTimeTo.getTime());
 
-            if (!Tools.checkDates(dateFrom, dateTo, new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()))) {
+            if (!Tools.checkDates(dateFrom, dateTo, new SimpleDateFormat("yyyy-MM-dd HH:mm", new Locale("id", "ID")))) {
                 Toast.makeText(RequestCreateFragment.this.getContext(), "Tanggal mulai tidak boleh lebih besar dari tanggal akhir", Toast.LENGTH_SHORT).show();
                 return false;
             }
@@ -298,14 +333,37 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
             url = Constant.URL.OVERTIME;
         }
 
+        String catId;
+
+        if (type == 0) {
+            if (categorySelected.equalsIgnoreCase("Tahunan")) {
+                catId = "1";
+            } else if (categorySelected.equalsIgnoreCase("Potong Gaji")) {
+                catId = "2";
+            } else  {
+                catId = "3";
+            }
+        } else if (type == 2) {
+            if (categorySelected.equalsIgnoreCase("Perjalanan Dinas")) {
+                catId = "4";
+            } else if (categorySelected.equalsIgnoreCase("Keperluan Pribadi")) {
+                catId = "5";
+            } else  {
+                catId = "6";
+            }
+        } else {
+            catId = "";
+        }
+
         Call<RequestInsertResponse> responseCall = RequestService.insertRequest(
                 requireActivity(),
                 url,
                 etReason.getText().toString(),
                 imageValue,
-                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(clSickLetterDate.getTime()),
-                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarFrom.getTime()),
-                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarTo.getTime())
+                new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(clSickLetterDate.getTime()),
+                new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(calendarFrom.getTime()),
+                new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(calendarTo.getTime()),
+                catId
         );
 
         responseCall.enqueue(new Callback<RequestInsertResponse>() {
@@ -519,5 +577,15 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
                 }
             }
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        categorySelected = parent.getSelectedItem().toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

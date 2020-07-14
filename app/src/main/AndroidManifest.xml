@@ -39,13 +39,17 @@
                 android:resource="@xml/file_path" />
         </provider>
         <activity android:name=".module.login.LoginActivity"
-            android:theme="@style/NoActionBar">
+            android:theme="@style/NoActionBar"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity android:name="com.absensi.alpa.module.home.HomeActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation"
             android:theme="@style/NoActionBar"/>
     </application>
 

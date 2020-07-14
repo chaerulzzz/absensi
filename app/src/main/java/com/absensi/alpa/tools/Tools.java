@@ -113,7 +113,7 @@ public class Tools {
 
             if (bitmap != null) {
                 try {
-                    SimpleDateFormat dateImage = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.getDefault());
+                    SimpleDateFormat dateImage = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", new Locale("id", "ID"));
                     String dateTime = dateImage.format(Calendar.getInstance().getTime());
                     Canvas canvas;
                     float scale = activity.getResources().getDisplayMetrics().density;

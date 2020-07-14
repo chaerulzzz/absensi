@@ -39,10 +39,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         holder.tvTitle.setText(item.getTitle());
 
         if (!item.getTime().equalsIgnoreCase("")) {
-            SimpleDateFormat day = new SimpleDateFormat("EEEE", Locale.getDefault());
-            SimpleDateFormat date = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
-            SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            SimpleDateFormat day = new SimpleDateFormat("EEEE", new Locale("id", "ID"));
+            SimpleDateFormat date = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
+            SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID"));
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", new Locale("id", "ID"));
 
             holder.tvSubtitleDay.setText(day.format(new Date()));
             holder.tvSubtitleDate.setText(date.format(new Date()));

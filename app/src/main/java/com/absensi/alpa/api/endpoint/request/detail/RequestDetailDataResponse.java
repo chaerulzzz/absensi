@@ -41,7 +41,7 @@ public class RequestDetailDataResponse {
     @Expose
     private String letterDate;
 
-    @SerializedName("letter")
+    @SerializedName("letters")
     @Expose
     private String letter;
 

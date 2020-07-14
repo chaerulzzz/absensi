@@ -5,7 +5,7 @@
     <string name="username_title_activity_login">Username</string>
     <string name="password_title_activity_login">Password</string>
     <string name="title_activity_home">Beranda</string>
-    <string name="welcome_title_activity_home">Welcome back</string>
+    <string name="welcome_title_activity_home">Selamat Datang Kembali</string>
     <string name="user_text_activity_home">Hartinah</string>
     <string name="attendance_title_activity_home">Absensi</string>
     <string name="request_title_activity_home">Pengajuan</string>
@@ -58,9 +58,11 @@
     <string name="leave_total_title">Sisa Cuti</string>
     <string name="reason_title">Alasan</string>
     <string name="letter_sick_title">Tanggal surat sakit</string>
+    <string name="approval">Penyetujuan</string>
     <string name="approval_request_title">Penyetujuan Pengajuan</string>
     <string name="approval_status_title">Status</string>
     <string name="document_number_title">Nomor Dokumen</string>
+    <string name="category_title">Kategori</string>
 
     <string name="old_password_title">Password Lama</string>
     <string name="new_password_title">Password Baru</string>

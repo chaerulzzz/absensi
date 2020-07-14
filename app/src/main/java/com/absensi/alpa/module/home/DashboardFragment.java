@@ -83,6 +83,22 @@ public class DashboardFragment extends Fragment {
 
                                 tvUsername.setText(dataResponse.getUserName());
 
+                                if (dataResponse.getApproval() != null) {
+                                    Preferences preferences = Preferences.getInstance();
+                                    preferences.begin();
+                                    preferences.put(Constant.CREDENTIALS.APPROVER, dataResponse.getApproval());
+                                    preferences.commit();
+
+                                    tvTotalLeave.setText(dataResponse.getTotalLeave());
+                                } else {
+                                    Preferences preferences = Preferences.getInstance();
+                                    preferences.begin();
+                                    preferences.put(Constant.CREDENTIALS.APPROVER, "-");
+                                    preferences.commit();
+
+                                    tvTotalLeave.setText("0");
+                                }
+
                                 if (dataResponse.getAlpha() != null) {
                                     tvAlpha.setText(dataResponse.getAlpha());
                                 } else {
@@ -102,8 +118,18 @@ public class DashboardFragment extends Fragment {
                                 }
 
                                 if (dataResponse.getTotalLeave() != null) {
+                                    Preferences preferences = Preferences.getInstance();
+                                    preferences.begin();
+                                    preferences.put(Constant.CREDENTIALS.TOTAL_LEAVE, dataResponse.getTotalLeave());
+                                    preferences.commit();
+
                                     tvTotalLeave.setText(dataResponse.getTotalLeave());
                                 } else {
+                                    Preferences preferences = Preferences.getInstance();
+                                    preferences.begin();
+                                    preferences.put(Constant.CREDENTIALS.TOTAL_LEAVE, "0");
+                                    preferences.commit();
+
                                     tvTotalLeave.setText("0");
                                 }
 

@@ -37,18 +37,16 @@ public class RequestService {
             String letter,
             String letterDate,
             String startDate,
-            String endDate
+            String endDate,
+            String catId
     ) {
         RequestInsertRequest request = new RequestInsertRequest();
-
-        if (!url.equalsIgnoreCase(Constant.URL.SICK)) {
-            request.setCategoryId(String.valueOf(1));
-        }
 
         if (url.equalsIgnoreCase(Constant.URL.SICK)) {
             request.setHospitalization("Y");
         }
 
+        request.setCategoryId(catId);
         request.setStartDate(startDate);
         request.setEndDate(endDate);
         request.setLetterDate(letterDate);
@@ -62,11 +60,10 @@ public class RequestService {
 
     public static Call<RequestDetailResponse> getDetailRequest(
             Activity activity,
-            String url,
-            String id
+            String url
     ){
         return Api.getRetrofit(activity)
                 .create(Parser.class)
-                .getDetail(url, id);
+                .getDetail(url);
     }
 }

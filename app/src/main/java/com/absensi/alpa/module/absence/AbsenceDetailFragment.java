@@ -133,6 +133,8 @@ public class AbsenceDetailFragment extends Fragment implements View.OnClickListe
             }
         } else if (v.equals(btnAbsence)) {
             sendPresence(type);
+        } else if (v.equals(btnBack)) {
+            requireActivity().getSupportFragmentManager().popBackStackImmediate();
         }
     }
 
@@ -255,7 +257,7 @@ public class AbsenceDetailFragment extends Fragment implements View.OnClickListe
         LoadingDialog dialog = new LoadingDialog(requireContext());
         dialog.show();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:ss", new Locale("id", "ID"));
         Call<PresentResponse> responseCall = PresentService.sendPresence(
                 this.requireActivity(),
                 Constant.URL.ATTENDANCE,

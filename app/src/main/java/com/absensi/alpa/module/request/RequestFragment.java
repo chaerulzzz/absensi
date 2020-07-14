@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.absensi.alpa.R;
@@ -21,6 +22,7 @@ import com.absensi.alpa.api.endpoint.request.RequestService;
 import com.absensi.alpa.module.home.HomeActivity;
 import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.LoadingDialog;
 import com.absensi.alpa.tools.Preferences;
 import com.google.android.material.card.MaterialCardView;
 
@@ -74,11 +76,17 @@ public class RequestFragment extends Fragment implements View.OnClickListener, R
         this.tvViewAll.setOnClickListener(this);
 
         this.tvNoData = view.findViewById(R.id.noData);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false));
+        recyclerView.setAdapter(adapter);
     }
 
     private void setData() {
-        String dateNow = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        String dateFrom1 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(this.get4DaysBefore(new Date()));
+        LoadingDialog dialog = new LoadingDialog(requireContext());
+        dialog.show();
+
+        String dateNow = new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(new Date());
+        String dateFrom1 = new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(this.get4DaysBefore(new Date()));
 
         Call<RequestListResponse> responseCall = RequestService.getListRequest(
                 this.requireActivity(),
@@ -105,9 +113,18 @@ public class RequestFragment extends Fragment implements View.OnClickListener, R
 
                                 item.setTitle(dataResponse.getRequestType());
 
-                                String period = dataResponse.getRequestDateStart() + " - " + dataResponse.getRequestDateEnd();
+                                Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID")).parse(dataResponse.getRequestDateStart());
+                                Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID")).parse(dataResponse.getRequestDateEnd());
+                                SimpleDateFormat time = new SimpleDateFormat("dd MMM yy", new Locale("id", "ID"));
+
+                                if (date != null && date2 != null) {
+                                    String period = time.format(date) + " - " + time.format(date2);
+                                    item.setPeriod(period);
+                                } else {
+                                    item.setPeriod("");
+                                }
+
                                 item.setId(dataResponse.getRequestId());
-                                item.setPeriod(period);
                                 item.setStatus(dataResponse.getRequestStatus());
                                 item.setCreated(dataResponse.getRequester());
                                 adapter.getItems().add(item);
@@ -148,11 +165,15 @@ public class RequestFragment extends Fragment implements View.OnClickListener, R
                     }
                 } catch (Exception ex) {
                     Toast.makeText(RequestFragment.this.getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                } finally {
+                    dialog.dismiss();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<RequestListResponse> call, @NotNull Throwable t) {
+                dialog.dismiss();
+                t.printStackTrace();
                 Toast.makeText(RequestFragment.this.getContext(), RequestFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
             }
         });

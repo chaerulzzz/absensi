@@ -60,8 +60,8 @@ public class AbsenceFragment extends Fragment implements View.OnClickListener {
 
     private void setData(){
         Date date = new Date();
-        SimpleDateFormat day = new SimpleDateFormat("EEE", Locale.getDefault());
-        SimpleDateFormat dateNow = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        SimpleDateFormat day = new SimpleDateFormat("EEEE", new Locale("id", "ID"));
+        SimpleDateFormat dateNow = new SimpleDateFormat("dd MMMM yyyy", new Locale("id", "ID"));
 
         this.tvDay.setText(day.format(date));
         this.tvDate.setText(dateNow.format(date));

@@ -23,6 +23,7 @@ import com.absensi.alpa.api.endpoint.attendance.AttendanceService;
 import com.absensi.alpa.module.home.DashboardFragment;
 import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.LoadingDialog;
 import com.absensi.alpa.tools.Preferences;
 import com.google.android.material.button.MaterialButton;
 
@@ -101,11 +102,14 @@ public class AbsenceListFragment extends Fragment implements View.OnClickListene
     }
 
     private void getData(){
+        LoadingDialog dialog = new LoadingDialog(requireContext());
+        dialog.show();
+
         Call<AttendanceResponse> responseCall = AttendanceService.getAttendance(
                 this.requireActivity(),
                 Constant.URL.ATTENDANCE_LIST,
-                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarFrom.getTime()),
-                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarTo.getTime()));
+                new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(calendarFrom.getTime()),
+                new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(calendarTo.getTime()));
 
         responseCall.enqueue(new Callback<AttendanceResponse>() {
             @Override
@@ -120,21 +124,21 @@ public class AbsenceListFragment extends Fragment implements View.OnClickListene
                             for (AttendanceDataResponse dataResponse : attendanceResponse.getData()) {
                                 AbsenceListAdapter.Item item = new AbsenceListAdapter.Item();
 
-                                Date date1 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dataResponse.getDateIn());
+                                Date date1 = new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).parse(dataResponse.getDateIn());
 
                                 Date date2 = null;
                                 Date date3 = null;
 
                                 if (dataResponse.getTimeIn() != null) {
-                                    date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dataResponse.getTimeIn());
+                                    date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID")).parse(dataResponse.getTimeIn());
                                 }
 
                                 if (dataResponse.getTimeOut() != null) {
-                                    date3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dataResponse.getTimeOut());
+                                    date3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID")).parse(dataResponse.getTimeOut());
                                 }
-                                SimpleDateFormat dayNumber = new SimpleDateFormat("d", Locale.getDefault());
-                                SimpleDateFormat dayInWeek = new SimpleDateFormat("E", Locale.getDefault());
-                                SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                                SimpleDateFormat dayNumber = new SimpleDateFormat("d", new Locale("id", "ID"));
+                                SimpleDateFormat dayInWeek = new SimpleDateFormat("E", new Locale("id", "ID"));
+                                SimpleDateFormat time = new SimpleDateFormat("HH:mm", new Locale("id", "ID"));
 
                                 if (date1 != null) {
                                     item.setDayNumber(dayNumber.format(date1));
@@ -182,11 +186,15 @@ public class AbsenceListFragment extends Fragment implements View.OnClickListene
                     }
                 } catch (Exception ex) {
                     Toast.makeText(AbsenceListFragment.this.getContext(), AbsenceListFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                } finally {
+                    dialog.dismiss();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<AttendanceResponse> call, @NotNull Throwable t) {
+                dialog.dismiss();
+                t.printStackTrace();
                 Toast.makeText(AbsenceListFragment.this.getContext(), AbsenceListFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
             }
         });

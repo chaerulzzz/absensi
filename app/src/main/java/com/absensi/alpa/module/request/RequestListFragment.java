@@ -24,6 +24,7 @@ import com.absensi.alpa.api.endpoint.request.list.RequestListResponse;
 import com.absensi.alpa.module.home.HomeActivity;
 import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.LoadingDialog;
 import com.absensi.alpa.tools.Preferences;
 import com.google.android.material.button.MaterialButton;
 
@@ -33,6 +34,7 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -102,11 +104,14 @@ public class RequestListFragment extends Fragment implements View.OnClickListene
     }
 
     private void getData(){
+        LoadingDialog dialog = new LoadingDialog(requireContext());
+        dialog.show();
+
         Call<RequestListResponse> responseCall = RequestService.getListRequest(
                 this.requireActivity(),
                 Constant.URL.REQUEST,
-                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarFrom.getTime()),
-                new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendarTo.getTime()));
+                new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(calendarFrom.getTime()),
+                new SimpleDateFormat("yyyy-MM-dd", new Locale("id", "ID")).format(calendarTo.getTime()));
 
         responseCall.enqueue(new Callback<RequestListResponse>() {
             @Override
@@ -123,9 +128,18 @@ public class RequestListFragment extends Fragment implements View.OnClickListene
 
                                 item.setTitle(dataResponse.getRequestType());
 
-                                String period = dataResponse.getRequestDateStart() + " - " + dataResponse.getRequestDateEnd();
+                                Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID")).parse(dataResponse.getRequestDateStart());
+                                Date date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID")).parse(dataResponse.getRequestDateEnd());
+                                SimpleDateFormat time = new SimpleDateFormat("dd MMM yy", new Locale("id", "ID"));
+
+                                if (date != null && date2 != null) {
+                                    String period = time.format(date) + " - " + time.format(date2);
+                                    item.setPeriod(period);
+                                } else {
+                                    item.setPeriod("");
+                                }
+
                                 item.setId(dataResponse.getRequestId());
-                                item.setPeriod(period);
                                 item.setStatus(dataResponse.getRequestStatus());
                                 item.setCreated(dataResponse.getRequester());
                                 adapter.getItems().add(item);
@@ -157,11 +171,15 @@ public class RequestListFragment extends Fragment implements View.OnClickListene
                     }
                 } catch (Exception ex) {
                     Toast.makeText(RequestListFragment.this.getContext(), RequestListFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                } finally {
+                    dialog.dismiss();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<RequestListResponse> call, @NotNull Throwable t) {
+                dialog.dismiss();
+                t.printStackTrace();
                 Toast.makeText(RequestListFragment.this.getContext(), RequestListFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
             }
         });

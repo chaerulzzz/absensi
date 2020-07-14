@@ -55,7 +55,7 @@ public interface Parser {
     Call<RequestInsertResponse> sendRequest(@Url String url, @Body RequestInsertRequest request);
 
     @GET
-    Call<RequestDetailResponse> getDetail(@Url String url, @Query("id") String id);
+    Call<RequestDetailResponse> getDetail(@Url String url);
 
     @GET
     Call<ApprovalListResponse> getList(@Url String url);

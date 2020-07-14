@@ -73,10 +73,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:background="@drawable/square_background_shape"
+        android:backgroundTint="@color/profileBackgroundColor"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:padding="5dp"
+        android:padding="10dp"
         android:textColor="@android:color/black"
         android:inputType="text"
         android:ellipsize="end"
@@ -103,7 +103,7 @@
         app:boxStrokeColor="@color/profileBackgroundColor"
         app:boxStrokeWidth="2dp"
         app:endIconMode="password_toggle"
-        app:passwordToggleTint="@android:color/black">
+        app:endIconTint="@android:color/black">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/tietOldPassword"
@@ -134,9 +134,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="20dp"
+        app:boxStrokeColor="@color/profileBackgroundColor"
         app:boxStrokeWidth="2dp"
         app:endIconMode="password_toggle"
-        app:passwordToggleEnabled="true"
         app:endIconTint="@android:color/black">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -145,9 +145,9 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:inputType="textPassword"
+            android:background="@android:color/transparent"
             android:maxLines="1"
             android:textAllCaps="false"
-            android:background="@android:color/transparent"
             android:textColor="@android:color/black"/>
     </com.google.android.material.textfield.TextInputLayout>
 

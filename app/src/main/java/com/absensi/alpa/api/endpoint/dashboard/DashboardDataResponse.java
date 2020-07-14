@@ -33,6 +33,10 @@ public class DashboardDataResponse {
     @Expose
     private String userName;
 
+    @SerializedName("approval")
+    @Expose
+    private String approval;
+
     public String getTimeIn() {
         return timeIn;
     }
@@ -87,5 +91,13 @@ public class DashboardDataResponse {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public String getApproval() {
+        return approval;
+    }
+
+    public void setApproval(String approval) {
+        this.approval = approval;
     }
 }

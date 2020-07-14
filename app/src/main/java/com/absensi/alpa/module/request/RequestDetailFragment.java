@@ -24,10 +24,10 @@ import com.absensi.alpa.api.endpoint.approval.process.ApprovalProcessResponse;
 import com.absensi.alpa.api.endpoint.request.RequestService;
 import com.absensi.alpa.api.endpoint.request.detail.RequestDetailDataResponse;
 import com.absensi.alpa.api.endpoint.request.detail.RequestDetailResponse;
-import com.absensi.alpa.api.endpoint.request.insert.RequestInsertResponse;
 import com.absensi.alpa.module.home.HomeActivity;
 import com.absensi.alpa.module.login.LoginActivity;
 import com.absensi.alpa.tools.Constant;
+import com.absensi.alpa.tools.LoadingDialog;
 import com.absensi.alpa.tools.Preferences;
 import com.google.android.material.button.MaterialButton;
 
@@ -48,7 +48,7 @@ import retrofit2.Response;
 import static com.absensi.alpa.tools.Tools.base64ToBitmap;
 
 public class RequestDetailFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
-    private TextView tvDateNow, tvTitle, tvApprover, tvDateFrom, tvTimeFrom, tvDateTo, tvTimeTo, tvSickLetterDate, etReason, tvNumber, tvSpinnerStatus, tvNotesTitle;
+    private TextView tvDateNow, tvTitle, tvApprover, tvDateFrom, tvTimeFrom, tvDateTo, tvTimeTo, tvSickLetterDate, etReason, tvNumber, tvSpinnerStatus, tvNotesTitle, tvCategoryTitle, tvCategory;
     private LinearLayout llDateFrom, llTimeFrom, llDateTo, llTimeTo, llSickView, llImage, llSickLetterDate;
     private MaterialButton btnCancel, btnSave;
     private ImageView ivPhoto;
@@ -112,6 +112,9 @@ public class RequestDetailFragment extends Fragment implements View.OnClickListe
 
         this.ivPhoto = view.findViewById(R.id.ivPhoto);
 
+        this.tvCategoryTitle = view.findViewById(R.id.tvCategoryTitle);
+        this.tvCategory = view.findViewById(R.id.tvCategory);
+
         tvNumber = view.findViewById(R.id.tvNumber);
 
         List<String> lstStatus = new ArrayList<>();
@@ -143,6 +146,9 @@ public class RequestDetailFragment extends Fragment implements View.OnClickListe
     }
 
     private void sendProcess() {
+        LoadingDialog dialog = new LoadingDialog(requireContext());
+        dialog.show();
+
         String url;
 
         if (type.equalsIgnoreCase("Leave Request")) {
@@ -166,40 +172,49 @@ public class RequestDetailFragment extends Fragment implements View.OnClickListe
         responseCall.enqueue(new Callback<ApprovalProcessResponse>() {
             @Override
             public void onResponse(@NotNull Call<ApprovalProcessResponse> call, @NotNull Response<ApprovalProcessResponse> response) {
-                if (response.isSuccessful()) {
+                try {
+                    if (response.isSuccessful()) {
 
-                    ApprovalProcessResponse processResponse = response.body();
+                        ApprovalProcessResponse processResponse = response.body();
 
-                    if (processResponse != null) {
-                        if (processResponse.getCode().equalsIgnoreCase("200")) {
-                            Toast.makeText(RequestDetailFragment.this.getContext(), "Penyetujuan Pengajuan sukses", Toast.LENGTH_SHORT).show();
-                            ((HomeActivity)RequestDetailFragment.this.requireActivity()).getSupportFragmentManager().popBackStackImmediate();
+                        if (processResponse != null) {
+                            if (processResponse.getCode().equalsIgnoreCase("200")) {
+                                Toast.makeText(RequestDetailFragment.this.getContext(), "Penyetujuan Pengajuan sukses", Toast.LENGTH_SHORT).show();
+                                ((HomeActivity)RequestDetailFragment.this.requireActivity()).getSupportFragmentManager().popBackStackImmediate();
+                            }
+                        } else {
+                            Toast.makeText(RequestDetailFragment.this.getContext(), RequestDetailFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(RequestDetailFragment.this.getContext(), RequestDetailFragment.this.getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    try {
-                        JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
-                        Toast.makeText(RequestDetailFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+                        try {
+                            JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
+                            Toast.makeText(RequestDetailFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
 
-                        if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
-                            Preferences preferences = Preferences.getInstance();
-                            preferences.begin();
-                            preferences.put(Constant.CREDENTIALS.SESSION, "");
-                            preferences.commit();
+                            if (jObjError.getString("message").equalsIgnoreCase("Unauthorized")) {
+                                Preferences preferences = Preferences.getInstance();
+                                preferences.begin();
+                                preferences.put(Constant.CREDENTIALS.SESSION, "");
+                                preferences.commit();
 
-                            requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
-                            requireActivity().finish();
+                                requireActivity().startActivity(new Intent(requireContext(), LoginActivity.class));
+                                requireActivity().finish();
+                            }
+                        } catch (Exception e) {
+                            Toast.makeText(RequestDetailFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                         }
-                    } catch (Exception e) {
-                        Toast.makeText(RequestDetailFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
+                } catch (Exception ex) {
+                    Toast.makeText(requireContext(), requireActivity().getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                    ex.printStackTrace();
+                } finally {
+                    dialog.dismiss();
                 }
             }
 
             @Override
             public void onFailure(Call<ApprovalProcessResponse> call, Throwable t) {
+                t.printStackTrace();
+                dialog.dismiss();
                 Toast.makeText(RequestDetailFragment.this.getContext(), RequestDetailFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
             }
         });
@@ -215,6 +230,9 @@ public class RequestDetailFragment extends Fragment implements View.OnClickListe
     }
 
     private void setData(){
+        LoadingDialog dialog = new LoadingDialog(requireContext());
+        dialog.show();
+
         String url;
 
         if (type.equalsIgnoreCase("Leave Request")) {
@@ -227,73 +245,103 @@ public class RequestDetailFragment extends Fragment implements View.OnClickListe
             url = Constant.URL.OVERTIME;
         }
 
-        Call<RequestDetailResponse> responseCall = RequestService.getDetailRequest(requireActivity(), url, id);
+        Call<RequestDetailResponse> responseCall = RequestService.getDetailRequest(requireActivity(), url + "/" + id);
 
         responseCall.enqueue(new Callback<RequestDetailResponse>() {
             @Override
             public void onResponse(@NotNull Call<RequestDetailResponse> call, @NotNull Response<RequestDetailResponse> response) {
-                if (response.isSuccessful()) {
+                try {
+                    if (response.isSuccessful()) {
 
-                    RequestDetailResponse detailResponse = response.body();
+                        RequestDetailResponse detailResponse = response.body();
 
-                    if (detailResponse != null) {
-                        for(RequestDetailDataResponse dataResponse : detailResponse.getData()) {
-                            if (type.equalsIgnoreCase("Overtime Request")) {
-                                setTimeVisible(View.VISIBLE);
+                        if (detailResponse != null) {
+                            RequestDetailDataResponse dataResponse = detailResponse.getData();
 
-                                try {
-                                    Date date2 = null;
-                                    Date date3 = null;
+                            if (dataResponse != null) {
 
-                                    if (dataResponse.getDateStart() != null) {
-                                        date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dataResponse.getDateStart());
-                                    }
-
-                                    if (dataResponse.getDateEnd() != null) {
-                                        date3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dataResponse.getDateEnd());
-                                    }
-
-                                    SimpleDateFormat time = new SimpleDateFormat("HH:mm", Locale.getDefault());
-
-                                    if (date2 != null) {
-                                        tvTimeFrom.setText(time.format(date2));
+                                if (dataResponse.getCategory() != null) {
+                                    if (dataResponse.getCategory().equalsIgnoreCase("1")) {
+                                        tvCategory.setText("Tahunan");
+                                    } else if (dataResponse.getCategory().equalsIgnoreCase("2")) {
+                                        tvCategory.setText("Potong Gaji");
+                                    } else if (dataResponse.getCategory().equalsIgnoreCase("3")) {
+                                        tvCategory.setText("Melahirkan");
+                                    } else if (dataResponse.getCategory().equalsIgnoreCase("4")) {
+                                        tvCategory.setText("Perjalanan Dinas");
+                                    } else if (dataResponse.getCategory().equalsIgnoreCase("5")) {
+                                        tvCategory.setText("Keperluan Pribadi");
                                     } else {
-                                        tvTimeFrom.setText("");
+                                        tvCategory.setText("Lainnya");
                                     }
-
-                                    if (date3 != null) {
-                                        tvTimeTo.setText(time.format(date3));
-                                    } else {
-                                        tvTimeTo.setText("");
-                                    }
-                                } catch (Exception ex) {
-                                    ex.printStackTrace();
+                                } else {
+                                    tvCategory.setVisibility(View.GONE);
+                                    tvCategoryTitle.setVisibility(View.GONE);
                                 }
-                            } else {
-                                setTimeVisible(View.GONE);
-                            }
 
-                            if (type.equalsIgnoreCase("Sick Request")) {
-                                llSickView.setVisibility(View.VISIBLE);
+                                if (type.equalsIgnoreCase("Overtime Request")) {
+                                    setTimeVisible(View.VISIBLE);
 
-                                ivPhoto.setImageBitmap(base64ToBitmap(dataResponse.getLetter()));
-                                tvSickLetterDate.setText(dataResponse.getLetterDate());
-                            } else {
-                                llSickView.setVisibility(View.GONE);
-                            }
+                                    try {
+                                        Date date2 = null;
+                                        Date date3 = null;
 
-                            tvNumber.setText(dataResponse.getNumber());
-                            tvDateFrom.setText(dataResponse.getDateStart());
-                            tvDateTo.setText(dataResponse.getDateEnd());
-                            etReason.setText(dataResponse.getReason());
+                                        if (dataResponse.getDateStart() != null) {
+                                            date2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID")).parse(dataResponse.getDateStart());
+                                        }
 
-                            if (!dataResponse.getStatus().equalsIgnoreCase("263")) {
-                                if (typeFrom == 1) {
-                                    btnSave.setVisibility(View.VISIBLE);
-                                    spnStatus.setVisibility(View.VISIBLE);
-                                    tvSpinnerStatus.setVisibility(View.VISIBLE);
-                                    tvNotesTitle.setVisibility(View.VISIBLE);
-                                    etNotes.setVisibility(View.VISIBLE);
+                                        if (dataResponse.getDateEnd() != null) {
+                                            date3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", new Locale("id", "ID")).parse(dataResponse.getDateEnd());
+                                        }
+
+                                        SimpleDateFormat time = new SimpleDateFormat("HH:mm", new Locale("id", "ID"));
+
+                                        if (date2 != null) {
+                                            tvTimeFrom.setText(time.format(date2));
+                                        } else {
+                                            tvTimeFrom.setText("");
+                                        }
+
+                                        if (date3 != null) {
+                                            tvTimeTo.setText(time.format(date3));
+                                        } else {
+                                            tvTimeTo.setText("");
+                                        }
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
+                                } else {
+                                    setTimeVisible(View.GONE);
+                                }
+
+                                if (type.equalsIgnoreCase("Sick Request")) {
+                                    llSickView.setVisibility(View.VISIBLE);
+
+                                    ivPhoto.setImageBitmap(base64ToBitmap(dataResponse.getLetter()));
+                                    tvSickLetterDate.setText(dataResponse.getLetterDate());
+                                } else {
+                                    llSickView.setVisibility(View.GONE);
+                                }
+
+                                tvNumber.setText(dataResponse.getNumber());
+                                tvDateFrom.setText(dataResponse.getDateStart());
+                                tvDateTo.setText(dataResponse.getDateEnd());
+                                etReason.setText(dataResponse.getReason());
+
+                                if (!dataResponse.getStatus().equalsIgnoreCase("263")) {
+                                    if (typeFrom == 1) {
+                                        btnSave.setVisibility(View.VISIBLE);
+                                        spnStatus.setVisibility(View.VISIBLE);
+                                        tvSpinnerStatus.setVisibility(View.VISIBLE);
+                                        tvNotesTitle.setVisibility(View.VISIBLE);
+                                        etNotes.setVisibility(View.VISIBLE);
+                                    } else {
+                                        btnSave.setVisibility(View.GONE);
+                                        spnStatus.setVisibility(View.GONE);
+                                        tvSpinnerStatus.setVisibility(View.GONE);
+                                        tvNotesTitle.setVisibility(View.GONE);
+                                        etNotes.setVisibility(View.GONE);
+                                    }
                                 } else {
                                     btnSave.setVisibility(View.GONE);
                                     spnStatus.setVisibility(View.GONE);
@@ -301,27 +349,28 @@ public class RequestDetailFragment extends Fragment implements View.OnClickListe
                                     tvNotesTitle.setVisibility(View.GONE);
                                     etNotes.setVisibility(View.GONE);
                                 }
-                            } else {
-                                btnSave.setVisibility(View.GONE);
-                                spnStatus.setVisibility(View.GONE);
-                                tvSpinnerStatus.setVisibility(View.GONE);
-                                tvNotesTitle.setVisibility(View.GONE);
-                                etNotes.setVisibility(View.GONE);
                             }
                         }
+                    } else {
+                        try {
+                            JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
+                            Toast.makeText(RequestDetailFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+                            Toast.makeText(RequestDetailFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
-                } else {
-                    try {
-                        JSONObject jObjError = new JSONObject(Objects.requireNonNull(response.errorBody()).string());
-                        Toast.makeText(RequestDetailFragment.this.getContext(), jObjError.getString("message"), Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        Toast.makeText(RequestDetailFragment.this.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
+                } catch (Exception ex) {
+                    Toast.makeText(requireContext(), requireActivity().getString(R.string.error_occurred_contact_admin), Toast.LENGTH_SHORT).show();
+                    ex.printStackTrace();
+                } finally {
+                    dialog.dismiss();
                 }
             }
 
             @Override
             public void onFailure(@NotNull Call<RequestDetailResponse> call, @NotNull Throwable t) {
+                t.printStackTrace();
+                dialog.dismiss();
                 Toast.makeText(RequestDetailFragment.this.getContext(), RequestDetailFragment.this.getString(R.string.error_not_connected_to_server), Toast.LENGTH_SHORT).show();
             }
         });

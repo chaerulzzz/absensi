@@ -26,6 +26,8 @@ public class Constant {
         NAME,
         USERID,
         BIRTH_DATE,
-        BIRTH_PLACE
+        BIRTH_PLACE,
+        TOTAL_LEAVE,
+        APPROVER
     }
 }
