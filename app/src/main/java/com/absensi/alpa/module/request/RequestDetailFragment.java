@@ -179,7 +179,7 @@ public class RequestDetailFragment extends Fragment implements View.OnClickListe
 
                         if (processResponse != null) {
                             if (processResponse.getCode().equalsIgnoreCase("200")) {
-                                Toast.makeText(RequestDetailFragment.this.getContext(), "Penyetujuan Pengajuan sukses", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RequestDetailFragment.this.getContext(), "Proses pengajuan sukses", Toast.LENGTH_SHORT).show();
                                 ((HomeActivity)RequestDetailFragment.this.requireActivity()).getSupportFragmentManager().popBackStackImmediate();
                             }
                         } else {
@@ -328,7 +328,7 @@ public class RequestDetailFragment extends Fragment implements View.OnClickListe
                                 tvDateTo.setText(dataResponse.getDateEnd());
                                 etReason.setText(dataResponse.getReason());
 
-                                if (!dataResponse.getStatus().equalsIgnoreCase("263")) {
+                                if (!dataResponse.getStatus().equalsIgnoreCase("263") && !dataResponse.getStatus().equalsIgnoreCase("264")) {
                                     if (typeFrom == 1) {
                                         btnSave.setVisibility(View.VISIBLE);
                                         spnStatus.setVisibility(View.VISIBLE);

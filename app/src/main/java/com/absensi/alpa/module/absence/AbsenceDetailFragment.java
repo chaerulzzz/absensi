@@ -104,35 +104,67 @@ public class AbsenceDetailFragment extends Fragment implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.equals(imageView)) {
-            if (ActivityCompat.checkSelfPermission(requireActivity(),
-                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{
-                        Manifest.permission.CAMERA
-                }, 99);
+            if (Tools.isLocationEnabled(requireContext())) {
+                if (ActivityCompat.checkSelfPermission(requireActivity(),
+                        Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), new String[]{
+                            Manifest.permission.CAMERA
+                    }, 99);
 
-                return;
-            }
-
-            Intent goTo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-            if (goTo.resolveActivity(requireActivity().getPackageManager()) != null) {
-
-                File photoFile = Tools.createTempFile(requireActivity(), "absent_in");
-                if (photoFile != null) {
-                    imageValue = photoFile.getAbsolutePath();
-                    Uri photoURI = FileProvider.getUriForFile(requireActivity(),
-                            "com.absensi.alpa.fileprovider",
-                            photoFile);
-                    goTo.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
-                        goTo.setClipData(ClipData.newRawUri("", photoURI));
-                        goTo.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    }
-                    startActivityForResult(goTo, 99);
+                    return;
                 }
+
+                if (ActivityCompat.checkSelfPermission(this.requireActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this.getActivity(),
+                                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                            }, 555);
+                    return;
+                }
+
+                Intent goTo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+                if (goTo.resolveActivity(requireActivity().getPackageManager()) != null) {
+
+                    File photoFile = Tools.createTempFile(requireActivity(), "absent_in");
+                    if (photoFile != null) {
+                        imageValue = photoFile.getAbsolutePath();
+                        Uri photoURI = FileProvider.getUriForFile(requireActivity(),
+                                "com.absensi.alpa.fileprovider",
+                                photoFile);
+                        goTo.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+                            goTo.setClipData(ClipData.newRawUri("", photoURI));
+                            goTo.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
+                        startActivityForResult(goTo, 99);
+                    }
+                }
+            } else {
+                Toast.makeText(requireContext(), "Tolong aktifkan GPS terlebih dahulu", Toast.LENGTH_SHORT).show();
             }
         } else if (v.equals(btnAbsence)) {
-            sendPresence(type);
+            if (Tools.isLocationEnabled(requireContext())) {
+                if (ActivityCompat.checkSelfPermission(this.requireActivity(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(this.getActivity(),
+                                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(getActivity(),
+                            new String[]{
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                            }, 555);
+                    return;
+                }
+
+                sendPresence(type);
+            } else {
+                Toast.makeText(requireContext(), "Tolong aktifkan GPS terlebih dahulu", Toast.LENGTH_SHORT).show();
+            }
         } else if (v.equals(btnBack)) {
             requireActivity().getSupportFragmentManager().popBackStackImmediate();
         }

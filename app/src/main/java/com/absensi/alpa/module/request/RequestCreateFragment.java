@@ -100,7 +100,6 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
         this.init(view);
         this.setView();
         this.setTime();
-        this.setData();
         return view;
     }
 
@@ -312,10 +311,6 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
         }
 
         return true;
-    }
-
-    private void setData(){
-
     }
 
     private void insertRequest(){
@@ -582,6 +577,14 @@ public class RequestCreateFragment extends Fragment implements View.OnClickListe
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         categorySelected = parent.getSelectedItem().toString();
+
+        if (categorySelected.equalsIgnoreCase("Tahunan")) {
+            tvLeaveTotalTitle.setVisibility(View.VISIBLE);
+            tvLeaveTotal.setVisibility(View.VISIBLE);
+        } else {
+            tvLeaveTotalTitle.setVisibility(View.GONE);
+            tvLeaveTotal.setVisibility(View.GONE);
+        }
     }
 
     @Override

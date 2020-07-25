@@ -1,6 +1,7 @@
 package com.absensi.alpa.tools;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -8,10 +9,12 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.location.Location;
+import android.location.LocationManager;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.Settings;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -275,64 +278,12 @@ public class Tools {
         return Bcrypt.hashpw(pass, Bcrypt.gensalt());
     }
 
-    public static boolean generalValidation(@NonNull View mParentView, View mContentView,
-                                            @NonNull String mMessage, @NonNull Integer mType) {
-
-        if (mParentView instanceof TextInputLayout) {
-            TextInputLayout mInputLayout = (TextInputLayout) mParentView;
-
-            if (mContentView != null) {
-                if (mContentView instanceof TextInputEditText) {
-                    TextInputEditText mEdtText = (TextInputEditText) mContentView;
-
-                    if (TextUtils.isEmpty(mEdtText.getText().toString())) {
-                        mEdtText.requestFocus();
-                        mEdtText.setError(null);
-                        mInputLayout.setErrorEnabled(true);
-                        mInputLayout.setError(mMessage);
-
-                        return false;
-                    } else {
-                        if (mType == 1) {
-                            if (!emailValidation(mEdtText.getText().toString().trim())) {
-                                mEdtText.setError(null);
-                                mInputLayout.setErrorEnabled(true);
-                                mInputLayout.setError(mMessage);
-
-                                return false;
-                            }
-                        } else if (mType == 2) {
-                            if (mEdtText.getText().toString().length() < 6) {
-                                mEdtText.setError(null);
-                                mInputLayout.setErrorEnabled(true);
-                                mInputLayout.setError(mMessage);
-
-                                return false;
-                            }
-                        } else if (mType == 3) {
-                            if (mEdtText.getText().toString().length() > 15 || mEdtText.getText().toString().length() < 11) {
-                                mEdtText.setError(null);
-                                mInputLayout.setErrorEnabled(true);
-                                mInputLayout.setError(mMessage);
-
-                                return false;
-                            }
-                        }
-                    }
-                }
-            } else {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     private static boolean emailValidation(String mEmail) {
 
         if (!TextUtils.isEmpty(mEmail)) {
             String expression = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+                    + "[A-" +
+                    "Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 
             Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(mEmail);
@@ -340,5 +291,22 @@ public class Tools {
         }
 
         return false;
+    }
+
+    public static Boolean isLocationEnabled(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+
+            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+            assert lm != null;
+            boolean gps = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            boolean network = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            return gps || network;
+        } else {
+
+            int mode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE,
+                    Settings.Secure.LOCATION_MODE_OFF);
+            return  (mode != Settings.Secure.LOCATION_MODE_OFF);
+        }
     }
 }
